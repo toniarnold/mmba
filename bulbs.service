@@ -1,0 +1,13 @@
+[Unit]
+Description=bulbs.py server für mystrom-Birnen
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/etc/network/bulbs.py
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=default.target
