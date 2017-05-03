@@ -60,10 +60,10 @@ def post(bulb, command=None):
     True
     """
     request = urllib.request.Request(url(bulb))
-    request.add_header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+    request.add_header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8')
     if not command is None:
         data = urllib.parse.urlencode(command, safe=';')
-        data = data.encode('utf-8')
+        data = data.encode('ascii")
         f = urllib.request.urlopen(request, data)
     else:
         f = urllib.request.urlopen(request)
@@ -218,7 +218,7 @@ def rgb_2_color(r, g, b):
     -1
     """
     val = - ((r * 256 * 256) + (g * 256) + b)
-    val = - 1 if val == 0 else val  # Spezialfall Scharz: kein negatives -0 trotz float
+    val = - 1 if val == 0 else val  # Spezialfall Scwarz: kein negatives -0 trotz float
     return val
 
 
@@ -243,7 +243,7 @@ def handle_echo(reader, writer):
     if args.verbose:
         print("Reply: {}".format(reply))
     messages = netreceive(bulb, reply)
-    writer.write(bytes(messages, 'ascii'))
+    writer.write(bytes(messages, 'utf-8'))
     yield from writer.drain()
     writer.close()
 
