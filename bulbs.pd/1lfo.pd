@@ -1,0 +1,20 @@
+#N canvas 412 353 189 166 10;
+#X obj 26 14 vradio 20 1 0 5 s_wave_1 r_wave_1 empty 0 -8 0 10 -262144
+-1 -1 4;
+#X text 4 57 Tri;
+#X text 4 37 Sin;
+#X text 4 95 Aud;
+#X text 4 76 Rec;
+#X text 4 19 Off;
+#X obj 6 117 hradio 20 1 0 9 s_target1_1 r_target1_1 empty 0 -8 0 10
+-262144 -1 -1 0;
+#X obj 6 141 hradio 20 1 0 9 s_target2_1 r_target2_1 empty 0 -8 0 10
+-262144 -1 -1 4;
+#X obj 53 27 vsl 24 83 0 1 0 0 s_freq_1 r_freq_1 Frq 0 -6 0 10 -222484
+-1 -1 0 1;
+#X obj 83 27 vsl 24 83 0 1 0 0 s_lo_1 r_lo_1 Lo 0 -6 0 10 -87927 -1
+-1 0 1;
+#X obj 113 27 vsl 24 83 0 1 0 0 s_hi_1 r_hi_1 Hi 0 -6 0 10 -93240 -1
+-1 0 1;
+#X obj 143 26 vsl 24 83 0 1 0 0 s_mod_1 r_mod_1 Mod 0 -6 0 10 -97176
+-1 -1 0 1;

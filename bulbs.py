@@ -1,11 +1,16 @@
 #!/usr/bin/python3
 
-# Webserver, welcher via REST-API mit den mystrom-Bulbs kommuniziert
-# um von Pure Data Requests entgegenzunehmen.
+# Webserver, welcher via REST-API mit den myStrom-Bulbs kommuniziert,
+# um von Pure Data Requests im FUDI-Protokoll entgegenzunehmen,
+# diese in myStrom REST-Requests umzuwandeln und die JSON-Response
+# der Bulb wieder im FUDI-Protokoll zurückzuleiten.
 #
+# sudo systemctl enable bulbs.service
 # sudo service start bulbs
 # sudo service stop bulbs
 
+# Netzwerk-Konfiguration entsprechend bulbs_r_s.pd
+# Bulbs jeweils DNS-Name :  MAC-Adresse
 PORT = 8081
 BULBS = {
     "eingang" : "5CCF7FA0C8B4",
@@ -14,6 +19,7 @@ BULBS = {
 
 
 import argparse
+import pprint
 import doctest
 import time
 import urllib.request
@@ -29,7 +35,9 @@ helptext="""Webserver, welcher via REST-API über Port {0}
     """.format(PORT) + bulb_namen
 parser = argparse.ArgumentParser(description=helptext)
 parser.add_argument("-v", "--verbose", action="store_true",
-                    help="Gebe auch doctest output auf stdout aus")
+                    help="Request/Response-Logging. Gebe auch doctest output auf stdout aus.")
+parser.add_argument("-t", "--test", action="store_true",
+                    help="Führe doctest aus. Setzt die Original-Bulbs-Konfiguration voraus.")
 args = parser.parse_args()
 
 
@@ -60,10 +68,10 @@ def post(bulb, command=None):
     True
     """
     request = urllib.request.Request(url(bulb))
-    request.add_header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8')
+    request.add_header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
     if not command is None:
         data = urllib.parse.urlencode(command, safe=';')
-        data = data.encode('ascii")
+        data = data.encode('utf-8')
         f = urllib.request.urlopen(request, data)
     else:
         f = urllib.request.urlopen(request)
@@ -161,12 +169,12 @@ def split_color(color):
     return h, s, v
 
 
-def netreceive(bulb, values):
-    r"""Erzeuge aus der Bulb-Reply eine netreceive-Reply für das Feedback im GUI
+def netsend(bulb, values):
+    r"""Erzeuge aus der Bulb-Reply eine netsend-Reply für ein retreceive-Feedback im GUI
     
     >>> ack = {'on': True, 'notifyurl': '', 'ramp': 100, 'color': '90;80;70', 'mode': 'hsv'}
-    >>> msg = netreceive('mitte', ack)
-    >>> msg == 'bulb;\nmitte;\non;\n1;\nhue;\n90;\nsat;\n80;\nval;\n70;\nrgb;\n-6992419;\neof;\n'
+    >>> msg = netsend('mitte', ack)
+    >>> msg == 'bulb;\nmitte;\non;\n1;\nhue;\n90;\nsat;\n80;\nval;\n70;\nrgb;\n-6992420;\neof;\n'
     True
     """
     on = 1 if values['on'] else 0
@@ -191,6 +199,7 @@ eof;
 
 def hsv_2_rgb(h, s, v):
     """Konversion inklusive Abbildung der Bulb-HSV-Wertebereiche zu RGB
+    
     >>> hsv_2_rgb(0, 0, 100)
     (255, 255, 255)
     """
@@ -206,26 +215,20 @@ def hsv_2_rgb(h, s, v):
 
 def rgb_2_color(r, g, b):
     """Konversion RGB zu PureData RGB color
-    >>> rgb_2_color(0, 0, 255)
-    -255
-    >>> rgb_2_color(0, 255, 0)
-    -65280
-    >>> rgb_2_color(255, 0, 0)
-    -16711680
+    
     >>> rgb_2_color(255, 255, 255)
-    -16777215
+    -16777216
     >>> rgb_2_color(0, 0, 0)
     -1
     """
-    val = - ((r * 256 * 256) + (g * 256) + b)
-    val = - 1 if val == 0 else val  # Spezialfall Scwarz: kein negatives -0 trotz float
+    val = - 1 - ((r * 256 * 256) + (g * 256) + b)
     return val
 
 
 @asyncio.coroutine
 def handle_echo(reader, writer):
     """Nehme Kommandos von PureData entgegen und sende sie an die Bulb
-    Teste mit 
+    
     netcat -l 8081
     nc localhost 8081
     nc dahomey.local 8081
@@ -234,34 +237,42 @@ def handle_echo(reader, writer):
     puredata = data.decode().strip()
     if args.verbose:
         print("PureData: {}".format(repr(puredata)))
-    bulb, cmd, x = puredata[:-1].split()  # entferne ;
-    x=int(float(x))  # pd sliders sind float
-    command = commands[cmd](bulb, x)
+    bulb, *cmdarg = puredata[:-1].split()  # entferne ';'
+    command = None
+    if cmdarg:
+        cmd, arg = cmdarg
+        x=int(float(arg))  # pd sliders sind 0..1
+        command = commands[cmd](bulb, x)
     if args.verbose:
         print("Command: {}".format(command))
     reply=post(bulb, command)
     if args.verbose:
         print("Reply: {}".format(reply))
-    messages = netreceive(bulb, reply)
+    messages = netsend(bulb, reply)
     writer.write(bytes(messages, 'utf-8'))
     yield from writer.drain()
     writer.close()
 
 
-    
-# Bei --verbose Ausgabe auf stdout
-doctest.testmod()
+
+# Alle doctests in obigen Funktionen ausführen
+if args.test:
+    doctest.testmod(verbose=args.verbose)
+
 
     
 # Starte das Programm als Service
-
-get_current()
-if args.verbose:
-    print(current)    
     
 loop = asyncio.get_event_loop()
 coro = asyncio.start_server(handle_echo, '', PORT, loop=loop)
 server = loop.run_until_complete(coro)
+
+if args.verbose:
+    print("Frage die konfigurierten Bulbs {0} ab".format(bulb_namen))
+get_current()
+if args.verbose:
+    pp = pprint.PrettyPrinter()
+    pp.pprint(current) 
 
 print('Starte bulbs.py server auf {}'.format(server.sockets[0].getsockname()))
 try:

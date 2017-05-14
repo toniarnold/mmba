@@ -1,0 +1,26 @@
+#N canvas 165 351 450 300 10;
+#X obj 16 34 inlet;
+#X text 13 249 signal;
+#X obj 16 63 route feedback;
+#X obj 16 229 outlet;
+#X text 13 8 signal;
+#X obj 86 226 outlet;
+#X text 86 246 gate;
+#X msg 120 178 0;
+#X msg 86 179 1;
+#X obj 86 149 delay 300;
+#X obj 67 104 t a b b;
+#X text 143 7 Receive mit Feedback-Gate-Message \, d.h. vor dem Senden
+wird das entsprechende feedback-send sg geschlossen. delay 300 ist
+ein pragmatischer Wert für das Intranet \, d.h. die Zeit \, von der
+der Finger einen Slider loslässt \, bis dieser wieder auf feedback
+reagiert., f 35;
+#X connect 0 0 2 0;
+#X connect 2 0 3 0;
+#X connect 2 1 10 0;
+#X connect 7 0 5 0;
+#X connect 8 0 5 0;
+#X connect 9 0 8 0;
+#X connect 10 0 3 0;
+#X connect 10 1 9 0;
+#X connect 10 2 7 0;
