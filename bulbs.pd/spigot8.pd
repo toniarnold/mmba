@@ -25,8 +25,8 @@
 #X obj 376 125 == 6;
 #X obj 437 125 == 7;
 #X obj 508 125 == 8;
-#X text 10 9 Rechtes Inlet 1..8 leitet das Signal an das jeweilige
-Outlet., f 62;
+#X text 10 9 Rechtes Inlet 1..8 leitet das Signal am linken Inlet an
+das jeweilige Outlet., f 90;
 #X connect 0 0 10 0;
 #X connect 1 0 0 0;
 #X connect 1 0 3 0;

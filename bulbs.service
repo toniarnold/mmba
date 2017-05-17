@@ -1,5 +1,5 @@
 [Unit]
-Description=bulbs.py server für mystrom-Birnen
+Description=bulbs.py Server für myStrom-Birnen
 After=network-online.target
 Wants=network-online.target
 

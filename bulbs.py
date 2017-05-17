@@ -17,9 +17,13 @@ BULBS = {
     "mitte" : "5CCF7FA0CA06",
 }
 
+# Anzahl Iterationen für das Performance-Profiling, v.a. der erste Aufruf kann lange dauern
+PROFILE_COUNT = 20
+
 
 import argparse
 import pprint
+pp = pprint.PrettyPrinter(width=1)
 import doctest
 import time
 import urllib.request
@@ -27,6 +31,11 @@ import urllib.parse
 import json
 import colorsys
 import asyncio
+import time
+import random
+import numpy as np
+import collections
+
 
 
 bulb_namen = ", ".join(sorted(BULBS.keys()))
@@ -38,10 +47,63 @@ parser.add_argument("-v", "--verbose", action="store_true",
                     help="Request/Response-Logging. Gebe auch doctest output auf stdout aus.")
 parser.add_argument("-t", "--test", action="store_true",
                     help="Führe doctest aus. Setzt die Original-Bulbs-Konfiguration voraus.")
+parser.add_argument("-p", "--profile", action="store_true",
+                    help="Messe die Performance der Kommunikation mit den deklarierten Bulbs.")
 args = parser.parse_args()
 
 
 
+# Profiler
+
+# Verwendete Messreihen
+echo_times = []
+post_times = []
+
+def pprint_times():
+    print("\nEcho-Antwortzeiten")
+    pp.pprint(percentiles(echo_times))
+    print("Reine Bulb-Antwortzeiten")
+    pp.pprint(percentiles(post_times))
+
+
+def profile(times):
+    """Profile-Dekorator für Performance-Tests, hängt die gemessene Zeit
+    an die übergebene times-Liste an.
+    """
+    def wrap(func):
+        if args.profile:
+            def timed_func(*args, **kw):
+                begin = time.time()
+                retval = func(*args, **kw)
+                end = time.time()
+                times.append(end - begin)
+                return retval
+            return timed_func
+        else:
+            return func
+    return wrap
+
+
+def percentiles(times):    
+    """Dictionary mit Perzentilen der Performance-Verteilung
+    
+    >>> a = [.001, .003, .005, .007, .01]
+    >>> percentiles(a)
+    OrderedDict([('min', 1), ('1/4', 3), ('med', 5), ('3/4', 7), ('max', 10)])
+    """
+    p = np.percentile(times, [0, 25, 50, 75, 100])
+    d = collections.OrderedDict()
+    def ms(sec):
+        return int(round(sec * 1000, 0))
+    d['min'] = ms(p[0])
+    d['1/4'] = ms(p[1])
+    d['med'] = ms(p[2])
+    d['3/4'] = ms(p[3])
+    d['max'] = ms(p[4])
+    return d
+    
+
+    
 # Kommunikation mit der Bulb
 
 def url(bulb):
@@ -55,6 +117,7 @@ def url(bulb):
     return "http://{0}/api/v1/device/{1}".format(host, mac)
 
 
+@profile(post_times)
 def post(bulb, command=None):
     """Sende ein HTTP POST Kommando an die Bulb, dump ohne command
     
@@ -83,9 +146,8 @@ def post(bulb, command=None):
 
 
 current = {}
-
 def get_current():
-    """ Frage bei der Initialisierung aktuelle Werte aller Bulbs ab
+    """Frage bei der Initialisierung aktuelle Werte aller Bulbs ab
     
     >>> get_current()
     >>> sorted(current.keys())
@@ -225,6 +287,7 @@ def rgb_2_color(r, g, b):
     return val
 
 
+
 @asyncio.coroutine
 def handle_echo(reader, writer):
     """Nehme Kommandos von PureData entgegen und sende sie an die Bulb
@@ -233,11 +296,15 @@ def handle_echo(reader, writer):
     nc localhost 8081
     nc dahomey.local 8081
     """
+    # Als coroutine kein @profile(echo_times) möglich, da formal sofort return
+    if args.profile:
+        beginrequest = time.time()
+    
     data = yield from reader.read(255)
     puredata = data.decode().strip()
     if args.verbose:
         print("PureData: {}".format(repr(puredata)))
-    bulb, *cmdarg = puredata[:-1].split()  # entferne ';'
+    bulb, *cmdarg = puredata[:-1].split()  # entferne FUDI-';'
     command = None
     if cmdarg:
         cmd, arg = cmdarg
@@ -252,17 +319,61 @@ def handle_echo(reader, writer):
     writer.write(bytes(messages, 'utf-8'))
     yield from writer.drain()
     writer.close()
+    
+    if args.profile:
+        endresponse=time.time()
+        echo_times.append(endresponse - beginrequest)
 
 
+
+
+# Performance-Profiling ausführen
+if args.profile:
+    print("Starte Bulb-Profiling mit {0} Wiederholungen".format(PROFILE_COUNT))
+    count = PROFILE_COUNT
+    profiles = collections.OrderedDict()
+    for bulb in BULBS.keys():
+        # Timer-Listen leer initialisieren
+        times_bang=[]
+        times_on=[]
+        times_color = []
+        bulb_profile = collections.OrderedDict([
+            ('bang', times_bang),
+            ('on', times_on),
+            ('color', times_color),
+        ])
+        profiles[bulb] = bulb_profile
+        
+        # Profilieren
+        for i in range(0, count):
+            post(bulb)
+        bulb_profile['bang'] = percentiles(post_times)
+        del post_times[:]
+            
+        for i in range(0, count):
+            post(bulb, commands['on'](bulb, random.randint(0, 1)) )
+        bulb_profile['on'] = percentiles(post_times)
+        del post_times[:]
+                 
+        for i in range(0, count):
+            post(bulb, commands['hue'](bulb, random.randint(0, 99)) )
+        bulb_profile['color'] = percentiles(post_times)
+        del post_times[:]
+                
+    pp.pprint(profiles)
+    print("Profiling der PureData-App geht weiter bis <ctrl>+c")
+    
+    
+    
 
 # Alle doctests in obigen Funktionen ausführen
 if args.test:
     doctest.testmod(verbose=args.verbose)
 
 
-    
-# Starte das Programm als Service
-    
+
+
+# Starte das Programm als Service 
 loop = asyncio.get_event_loop()
 coro = asyncio.start_server(handle_echo, '', PORT, loop=loop)
 server = loop.run_until_complete(coro)
@@ -271,14 +382,15 @@ if args.verbose:
     print("Frage die konfigurierten Bulbs {0} ab".format(bulb_namen))
 get_current()
 if args.verbose:
-    pp = pprint.PrettyPrinter()
     pp.pprint(current) 
 
-print('Starte bulbs.py server auf {}'.format(server.sockets[0].getsockname()))
-try:
-    loop.run_forever()
-except KeyboardInterrupt:
-    pass
-server.close()
-loop.run_until_complete(server.wait_closed())
-loop.close()
+if __name__ == "__main__":
+    print("Starte bulbs.py server auf {}".format(server.sockets[0].getsockname()))
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        if args.profile:
+            pprint_times()
+    server.close()
+    loop.run_until_complete(server.wait_closed())
+    loop.close()

@@ -11,7 +11,7 @@ bulbs:
 	$(MAKE) -C bulbs.pd
 
 bulbs.pdz: bulbs.pd/bulbs.pdz
-	cp -u bulbs.pd/bulbs.pdz ./
+	cp bulbs.pd/bulbs.pdz ./
 
 install:
 	cp bulbs.py /etc/network/

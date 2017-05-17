@@ -10,67 +10,67 @@
 -262144 -1 -1 0;
 #X obj 2 141 hradio 20 1 0 9 s_target2_1 r_target2_1 empty 0 -8 0 10
 -262144 -1 -1 4;
-#X obj 49 27 vsl 24 83 0 1 0 0 s_freq_1 r_freq_1 Frq 0 -6 0 10 -222484
--1 -1 1640 1;
-#X obj 79 27 vsl 24 83 0 1 0 0 s_lo_1 r_lo_1 Lo 0 -6 0 10 -87927 -1
+#X obj 51 14 vsl 24 101 0 1 0 0 s_freq_1 r_freq_1 Frq 0 -6 0 10 -222484
+-1 -1 2000 1;
+#X obj 86 15 vsl 24 101 0 1 0 0 s_lo_1 r_lo_1 Lo 0 -6 0 10 -87927 -1
 -1 0 1;
-#X obj 109 27 vsl 24 83 0 1 0 0 s_hi_1 r_hi_1 Hi 0 -6 0 10 -93240 -1
--1 8200 1;
-#X obj 139 26 vsl 24 83 0 1 0 0 s_mod_1 r_mod_1 Mod 0 -6 0 10 -97176
--1 -1 4100 1;
-#X obj 209 14 vradio 20 1 0 5 s_wave_2 r_wave_2 empty 0 -8 0 10 -262144
+#X obj 122 14 vsl 24 101 0 1 0 0 s_hi_1 r_hi_1 Hi 0 -6 0 10 -93240
+-1 -1 10000 1;
+#X obj 158 14 vsl 24 101 0 1 0 0 s_mod_1 r_mod_1 Mod 0 -6 0 10 -97176
+-1 -1 5000 1;
+#X obj 213 14 vradio 20 1 0 5 s_wave_2 r_wave_2 empty 0 -8 0 10 -262144
 -1 -1 0;
-#X obj 189 117 hradio 20 1 0 9 s_target1_2 r_target1_2 empty 0 -8 0
+#X obj 193 117 hradio 20 1 0 9 s_target1_2 r_target1_2 empty 0 -8 0
 10 -262144 -1 -1 0;
-#X obj 189 141 hradio 20 1 0 9 s_target2_2 r_target2_2 empty 0 -8 0
+#X obj 193 141 hradio 20 1 0 9 s_target2_2 r_target2_2 empty 0 -8 0
 10 -262144 -1 -1 0;
-#X obj 236 27 vsl 24 83 0 1 0 0 s_freq_2 r_freq_2 Frq 0 -6 0 10 -222484
--1 -1 1640 1;
-#X obj 266 27 vsl 24 83 0 1 0 0 s_lo_2 r_lo_2 Lo 0 -6 0 10 -87927 -1
--1 0 1;
-#X obj 296 27 vsl 24 83 0 1 0 0 s_hi_2 r_hi_2 Hi 0 -6 0 10 -93240 -1
--1 8200 1;
-#X obj 326 26 vsl 24 83 0 1 0 0 s_mod_2 r_mod_2 Mod 0 -6 0 10 -97176
--1 -1 4100 1;
-#X obj 405 14 vradio 20 1 0 5 s_wave_3 r_wave_3 empty 0 -8 0 10 -262144
--1 -1 0;
-#X obj 385 117 hradio 20 1 0 9 s_target1_3 r_target1_3 empty 0 -8 0
-10 -262144 -1 -1 6;
-#X obj 385 140 hradio 20 1 0 9 s_target2_3 r_target2_3 empty 0 -8 0
-10 -262144 -1 -1 6;
-#X obj 432 27 vsl 24 83 0 1 0 0 s_freq_3 r_freq_3 Frq 0 -6 0 10 -222484
--1 -1 1640 1;
-#X obj 462 27 vsl 24 83 0 1 0 0 s_lo_3 r_lo_3 Lo 0 -6 0 10 -87927 -1
--1 0 1;
-#X obj 492 27 vsl 24 83 0 1 0 0 s_hi_3 r_hi_3 Hi 0 -6 0 10 -93240 -1
--1 8200 1;
-#X obj 522 26 vsl 24 83 0 1 0 0 s_mod_3 r_mod_3 Mod 0 -6 0 10 -97176
--1 -1 4100 1;
-#X obj 15 202 tgl 50 0 s_on_1 r_on_1 On/Off 0 -10 0 13 -175408 -355
--1 0 1;
-#X obj 85 186 vsl 45 86 0 1 0 0 s_hue_1 r_hue_1 Hue 0 -10 0 13 -222484
--1 -1 3552 1;
-#X obj 147 186 vsl 45 86 0 1 0 0 s_sat_1 r_sat_1 Sat 0 -10 0 13 -93240
--1 -1 1615 1;
-#X obj 210 186 vsl 45 86 0 1 0 0 s_val_1 r_val_1 Val 0 -10 0 13 -55159
--1 -1 3315 1;
-#X obj 298 202 tgl 50 0 s_on_2 r_on_2 On/Off 0 -10 0 13 -181655 -355
--1 1 1;
-#X obj 368 186 vsl 45 86 0 1 0 0 s_hue_2 r_hue_2 Hue 0 -10 0 13 -222484
+#X obj 243 14 vsl 24 101 0 1 0 0 s_freq_2 r_freq_2 Frq 0 -6 0 10 -222484
+-1 -1 2000 1;
+#X obj 278 14 vsl 24 101 0 1 0 0 s_lo_2 r_lo_2 Lo 0 -6 0 10 -87927
 -1 -1 0 1;
-#X obj 431 186 vsl 45 86 0 1 0 0 s_sat_2 r_sat_2 Sat 0 -10 0 13 -93240
--1 -1 1020 1;
-#X obj 493 186 vsl 45 86 0 1 0 0 s_val_2 r_val_2 Val 0 -10 0 13 -55159
--1 -1 5950 1;
-#X text 187 57 Tri;
-#X text 187 37 Sin;
-#X text 187 95 Aud;
-#X text 187 76 Rec;
-#X text 187 19 Off;
-#X text 383 57 Tri;
-#X text 383 38 Sin;
-#X text 383 96 Aud;
-#X text 383 76 Rec;
-#X text 383 19 Off;
-#X obj 262 232 bulbs_r_s;
-#X obj 262 254 lfos_r_s;
+#X obj 313 14 vsl 24 101 0 1 0 0 s_hi_2 r_hi_2 Hi 0 -6 0 10 -93240
+-1 -1 10000 1;
+#X obj 349 14 vsl 24 101 0 1 0 0 s_mod_2 r_mod_2 Mod 0 -6 0 10 -97176
+-1 -1 5000 1;
+#X obj 405 15 vradio 20 1 0 5 s_wave_3 r_wave_3 empty 0 -8 0 10 -262144
+-1 -1 0;
+#X obj 385 118 hradio 20 1 0 9 s_target1_3 r_target1_3 empty 0 -8 0
+10 -262144 -1 -1 6;
+#X obj 385 141 hradio 20 1 0 9 s_target2_3 r_target2_3 empty 0 -8 0
+10 -262144 -1 -1 6;
+#X obj 436 15 vsl 24 101 0 1 0 0 s_freq_3 r_freq_3 Frq 0 -6 0 10 -222484
+-1 -1 2000 1;
+#X obj 471 15 vsl 24 101 0 1 0 0 s_lo_3 r_lo_3 Lo 0 -6 0 10 -87927
+-1 -1 0 1;
+#X obj 505 15 vsl 24 101 0 1 0 0 s_hi_3 r_hi_3 Hi 0 -6 0 10 -93240
+-1 -1 10000 1;
+#X obj 541 15 vsl 24 101 0 1 0 0 s_mod_3 r_mod_3 Mod 0 -6 0 10 -97176
+-1 -1 5000 1;
+#X obj 15 202 tgl 50 0 s_on_1 r_on_1 On/Off 0 -10 0 13 -248530 -355
+-1 0 1;
+#X obj 86 178 vsl 45 101 0 1 0 0 s_hue_1 r_hue_1 Hue 0 -10 0 13 -222484
+-1 -1 0 1;
+#X obj 147 178 vsl 45 101 0 1 0 0 s_sat_1 r_sat_1 Sat 0 -10 0 13 -93240
+-1 -1 0 1;
+#X obj 209 178 vsl 45 101 0 1 0 0 s_val_1 r_val_1 Val 0 -10 0 13 -55159
+-1 -1 0 1;
+#X obj 307 202 tgl 50 0 s_on_2 r_on_2 On/Off 0 -10 0 13 -248530 -355
+-1 0 1;
+#X obj 376 178 vsl 45 101 0 1 0 0 s_hue_2 r_hue_2 Hue 0 -10 0 13 -222484
+-1 -1 0 1;
+#X obj 439 178 vsl 45 101 0 1 0 0 s_sat_2 r_sat_2 Sat 0 -10 0 13 -93240
+-1 -1 0 1;
+#X obj 502 178 vsl 45 101 0 1 0 0 s_val_2 r_val_2 Val 0 -10 0 13 -55159
+-1 -1 0 1;
+#X text 191 57 Tri;
+#X text 191 37 Sin;
+#X text 191 95 Aud;
+#X text 191 76 Rec;
+#X text 191 19 Off;
+#X text 383 58 Tri;
+#X text 383 39 Sin;
+#X text 383 97 Aud;
+#X text 383 77 Rec;
+#X text 383 20 Off;
+#X obj 259 254 lfos_r_s;
+#X obj 259 232 bulbs_r_s;
