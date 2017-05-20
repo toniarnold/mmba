@@ -6,3 +6,5 @@ Flexible App für den iPod Touch zwecks Steuerung von
 [PdParty](http://danomatika.com/code/pdparty) laufenden 
 [Pure Data](http://puredata.info/) App aus über einen Service auf einem 
 [Raspberry Pi](https://www.raspberrypi.org/learning/hardware-guide/components/raspberry-pi/).
+
+![PdParty screenshot](doc/PdParty_screen.png)
