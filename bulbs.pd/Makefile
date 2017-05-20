@@ -6,7 +6,11 @@ PD = _main.pd thumb.png \
      spigot8.pd 4spigot.pd \
      prepent.pd scale.pd speedlim.pd
 
+CD = countdown.pd bulb.pd
+
 .PHONY: clean
+
+all: bulbs.pdz countdown.pdz
 
 bulbs.pdz: $(PD)
 	mkdir bulbs
@@ -14,5 +18,15 @@ bulbs.pdz: $(PD)
 	zip -r bulbs.pdz bulbs
 	rm -r bulbs
 
+countdown.pdz: $(CD)
+	mkdir countdown
+	cp $(CD) countdown
+	mv countdown/countdown.pd countdown/_main.pd
+	zip -r countdown.pdz countdown
+	rm -r countdown
+
+
 clean:
-	rm bulbs.pdz
+	-rm bulbs.pdz
+	-rm countdown.pdz
+

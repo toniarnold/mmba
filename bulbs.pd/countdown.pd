@@ -1,0 +1,53 @@
+#N canvas 232 384 518 367 10;
+#X obj 11 103 nbx 5 15 1 200 0 0 s_time r_time Time 0 -8 0 10 -262144
+-1 -1 200 256;
+#X msg 6 192 200;
+#X obj 315 106 r s_time;
+#X obj 256 167 delay 200;
+#X obj 335 134 - 1;
+#X obj 20 325 bulb mitte dahomey.local 8081;
+#X obj 91 71 vsl 15 80 0 1 0 0 s_hue r_hue Hue 0 -9 0 10 -262144 -1
+-1 0 1;
+#X obj 104 290 float;
+#X obj 320 268 int;
+#X obj 320 296 s r_time;
+#X obj 207 228 t b b b;
+#X obj 12 58 bng 25 250 50 0 s_start r_start Start 30 7 0 10 -262144
+-1 -1;
+#X obj 10 129 bng 25 250 50 0 s_bang r_bang Msg 30 7 0 10 -262144 -1
+-1;
+#X obj 239 135 > 1;
+#X obj 194 203 spigot 1;
+#X obj 73 252 r s_bang;
+#X obj 135 248 r s_hue;
+#X obj 6 226 s r_time;
+#X obj 245 268 s r_bang;
+#X obj 142 134 t b b;
+#X obj 142 106 r s_start;
+#X obj 6 162 loadbang;
+#X text 4 6 Performance Test für netsend/netreceive \, zählt die
+Millisekunden runter und sendet immer schneller eine Hue-Message bis
+zum 1ms Intervall., f 52;
+#X obj 14 252 loadbang;
+#X msg 48 287 1;
+#X connect 1 0 17 0;
+#X connect 2 0 3 1;
+#X connect 2 0 4 0;
+#X connect 2 0 13 0;
+#X connect 3 0 14 0;
+#X connect 4 0 8 1;
+#X connect 7 0 5 2;
+#X connect 8 0 9 0;
+#X connect 10 0 3 0;
+#X connect 10 1 8 0;
+#X connect 10 2 18 0;
+#X connect 13 0 14 1;
+#X connect 14 0 10 0;
+#X connect 15 0 7 0;
+#X connect 16 0 7 1;
+#X connect 19 0 3 0;
+#X connect 19 1 1 0;
+#X connect 20 0 19 0;
+#X connect 21 0 1 0;
+#X connect 23 0 24 0;
+#X connect 24 0 5 1;
