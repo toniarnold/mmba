@@ -10,23 +10,23 @@
 #X msg 86 222 1;
 #X obj 86 192 delay 300;
 #X obj 67 147 t a b b;
-#X text 220 167 Receive mit Feedback-Gate-Message \, d.h. vor dem Senden
-wird das entsprechende feedback-send sg geschlossen. delay 300 ist
-ein pragmatischer Wert für das Intranet \, d.h. die Zeit \, von der
-der Finger einen Slider loslässt \, bis dieser wieder auf feedback
-reagiert., f 35;
 #X obj 67 111 speedlim 200;
 #X obj 136 70 r speedlim;
 #X text 215 67 Speed-Limit per Regler \, nicht global \, explizite
 feedback-message oder LFO triggert nicht das speedlim., f 36;
+#X text 220 167 Receive mit Feedback-Gate-Message \, d.h. vor dem Senden
+wird das entsprechende feedback-send sg geschlossen. delay 300 ist
+ein pragmatischer Wert \, d.h. die Zeit \, von der der Finger einen
+Slider loslässt \, bis dieser wieder auf feedback reagiert., f 35
+;
 #X connect 0 0 2 0;
 #X connect 2 0 3 0;
-#X connect 2 1 12 0;
+#X connect 2 1 11 0;
 #X connect 7 0 5 0;
 #X connect 8 0 5 0;
 #X connect 9 0 8 0;
 #X connect 10 0 3 0;
 #X connect 10 1 9 0;
 #X connect 10 2 7 0;
-#X connect 12 0 10 0;
-#X connect 13 0 12 1;
+#X connect 11 0 10 0;
+#X connect 12 0 11 1;

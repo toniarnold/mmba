@@ -1,35 +1,40 @@
-#N canvas 232 384 518 367 10;
-#X obj 11 103 nbx 5 15 1 200 0 0 s_time r_time Time 0 -8 0 10 -262144
+#N canvas 232 384 583 423 10;
+#X obj 13 122 nbx 3 15 1 200 0 0 s_time r_time Time 0 -8 0 10 -262144
 -1 -1 200 256;
-#X msg 6 192 200;
-#X obj 315 106 r s_time;
-#X obj 256 167 delay 200;
-#X obj 335 134 - 1;
-#X obj 20 325 bulb mitte dahomey.local 8081;
-#X obj 91 71 vsl 15 80 0 1 0 0 s_hue r_hue Hue 0 -9 0 10 -262144 -1
--1 0 1;
-#X obj 104 290 float;
-#X obj 320 268 int;
-#X obj 320 296 s r_time;
-#X obj 207 228 t b b b;
-#X obj 12 58 bng 25 250 50 0 s_start r_start Start 30 7 0 10 -262144
+#X msg 12 256 200;
+#X obj 360 140 r s_time;
+#X obj 301 201 delay 200;
+#X obj 380 168 - 1;
+#X obj 26 389 bulb mitte dahomey.local 8081;
+#X obj 138 78 vsl 15 110 0 1 0 0 s_hue r_hue Hue 0 -9 0 10 -262144
+-1 -1 0 1;
+#X obj 110 354 float;
+#X obj 365 302 int;
+#X obj 365 330 s r_time;
+#X obj 252 262 t b b b;
+#X obj 12 66 bng 25 250 50 0 s_start r_start Start 30 7 0 10 -262144
 -1 -1;
-#X obj 10 129 bng 25 250 50 0 s_bang r_bang Msg 30 7 0 10 -262144 -1
+#X obj 14 169 bng 25 250 50 0 s_bang r_bang Msg 30 7 0 10 -262144 -1
 -1;
-#X obj 239 135 > 1;
-#X obj 194 203 spigot 1;
-#X obj 73 252 r s_bang;
-#X obj 135 248 r s_hue;
-#X obj 6 226 s r_time;
-#X obj 245 268 s r_bang;
-#X obj 142 134 t b b;
-#X obj 142 106 r s_start;
-#X obj 6 162 loadbang;
-#X text 4 6 Performance Test für netsend/netreceive \, zählt die
+#X obj 284 169 > 1;
+#X obj 239 237 spigot 1;
+#X obj 79 316 r s_bang;
+#X obj 141 312 r s_hue;
+#X obj 12 290 s r_time;
+#X obj 290 302 s r_bang;
+#X obj 186 169 t b b;
+#X obj 187 140 r s_start;
+#X obj 12 226 loadbang;
+#X obj 20 316 loadbang;
+#X msg 54 351 1;
+#X obj 74 122 nbx 2 15 1 99 0 0 s_min r_min Min 0 -8 0 10 -262144 -1
+-1 2 256;
+#X obj 299 138 r s_min;
+#X obj 88 288 s r_min;
+#X text 6 7 Performance Test für netsend/netreceive \, zählt die
 Millisekunden runter und sendet immer schneller eine Hue-Message bis
-zum 1ms Intervall., f 52;
-#X obj 14 252 loadbang;
-#X msg 48 287 1;
+zum Min MillisekundenIntervall.;
+#X msg 88 256 1;
 #X connect 1 0 17 0;
 #X connect 2 0 3 1;
 #X connect 2 0 4 0;
@@ -49,5 +54,8 @@ zum 1ms Intervall., f 52;
 #X connect 19 1 1 0;
 #X connect 20 0 19 0;
 #X connect 21 0 1 0;
-#X connect 23 0 24 0;
-#X connect 24 0 5 1;
+#X connect 21 0 28 0;
+#X connect 22 0 23 0;
+#X connect 23 0 5 1;
+#X connect 25 0 13 1;
+#X connect 28 0 26 0;

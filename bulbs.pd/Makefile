@@ -1,5 +1,5 @@
 # Nur die Patches, die für die Runtime auch tatsächlich benötigt werden:
-PD = _main.pd thumb.png \
+PD = _main.pd thumb.png info.json \
      bulb.pd bulbs_r_s.pd \
      lfo.pd lfos_r_s.pd targets_r_s.pd \
      rg.pd sf.pd sg.pd \

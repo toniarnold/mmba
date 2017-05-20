@@ -17,13 +17,15 @@ BULBS = {
     "mitte" : "5CCF7FA0CA06",
 }
 
-# Anzahl Iterationen für das Performance-Profiling, v.a. der erste Aufruf kann lange dauern
+# Anzahl Iterationen für das Performance-Profiling, v.a. der erste Aufruf kann länger dauern
 PROFILE_COUNT = 20
+
 
 
 import argparse
 import pprint
 pp = pprint.PrettyPrinter(width=1)
+import collections
 import doctest
 import time
 import urllib.request
@@ -31,10 +33,8 @@ import urllib.parse
 import json
 import colorsys
 import asyncio
-import time
 import random
 import numpy as np
-import collections
 
 
 
@@ -67,8 +67,8 @@ def pprint_times():
 
 
 def profile(times):
-    """Profile-Dekorator für Performance-Tests, hängt die gemessene Zeit
-    an die übergebene times-Liste an.
+    """Profile-Dekorator für Performance-Tests von Funktionen,
+    hängt die gemessene Zeit an die übergebene times-Liste an.
     """
     def wrap(func):
         if args.profile:
@@ -86,21 +86,23 @@ def profile(times):
 
 def percentiles(times):    
     """Dictionary mit Perzentilen der Performance-Verteilung
+    Minimum, unteres Viertel, Median, oberes Viertel, Maximum
     
     >>> a = [.001, .003, .005, .007, .01]
     >>> percentiles(a)
     OrderedDict([('min', 1), ('1/4', 3), ('med', 5), ('3/4', 7), ('max', 10)])
     """
-    p = np.percentile(times, [0, 25, 50, 75, 100])
-    d = collections.OrderedDict()
-    def ms(sec):
-        return int(round(sec * 1000, 0))
-    d['min'] = ms(p[0])
-    d['1/4'] = ms(p[1])
-    d['med'] = ms(p[2])
-    d['3/4'] = ms(p[3])
-    d['max'] = ms(p[4])
-    return d
+    if (times):
+        p = np.percentile(times, [0, 25, 50, 75, 100])
+        d = collections.OrderedDict()
+        def ms(sec):
+            return int(round(sec * 1000, 0))
+        d['min'] = ms(p[0])
+        d['1/4'] = ms(p[1])
+        d['med'] = ms(p[2])
+        d['3/4'] = ms(p[3])
+        d['max'] = ms(p[4])
+        return d
     
 
     
@@ -306,7 +308,7 @@ def handle_echo(reader, writer):
         print("PureData: {}".format(repr(puredata)))
     bulb, *cmdarg = puredata[:-1].split()  # entferne FUDI-';'
     command = None
-    if cmdarg:
+    if cmdarg and (len(cmdarg) == 2):   # ignoriere ill-formed cmd arg
         cmd, arg = cmdarg
         x=int(float(arg))  # pd sliders sind 0..1
         command = commands[cmd](bulb, x)
@@ -333,7 +335,7 @@ if args.profile:
     count = PROFILE_COUNT
     profiles = collections.OrderedDict()
     for bulb in BULBS.keys():
-        # Timer-Listen leer initialisieren
+        # Timer-Listen-Dictionaries leer initialisieren
         times_bang=[]
         times_on=[]
         times_color = []
@@ -361,7 +363,7 @@ if args.profile:
         del post_times[:]
                 
     pp.pprint(profiles)
-    print("Profiling der PureData-App geht weiter bis <ctrl>+c")
+    print("\nProfiling von Requests geht weiter bis <ctrl>+c")
     
     
     
