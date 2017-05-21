@@ -49,6 +49,8 @@ parser.add_argument("-t", "--test", action="store_true",
                     help="Führe doctest aus. Setzt die Original-Bulbs-Konfiguration voraus.")
 parser.add_argument("-p", "--profile", action="store_true",
                     help="Messe die Performance der Kommunikation mit den deklarierten Bulbs.")
+parser.add_argument("-m", "--mock", action="store_true",
+                    help="Kommuniziere nicht mit den Bulbs, antworte mit einer Stub-Message.")
 args = parser.parse_args()
 
 
@@ -132,6 +134,11 @@ def post(bulb, command=None):
     >>> info == {'mode': 'hsv', 'battery': False, 'on': True, 'fw_version': '2.25', 'color': '90;80;70', 'reachable': True, 'ramp': 100, 'type': 'rgblamp', 'meshroot': False, 'power': 2.975}
     True
     """
+    if args.mock:   # for tracking down issue #1
+        values = {'on': True, 'notifyurl': '', 'ramp': 100, 'color': '90;80;70', 'mode': 'hsv'}
+        current[bulb] = values
+        return values
+
     request = urllib.request.Request(url(bulb))
     request.add_header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
     if not command is None:
