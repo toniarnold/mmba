@@ -15,7 +15,7 @@ args = parser.parse_args()
 pd_name = args.name
 nr = args.nummer
 
-re_symbol = re.compile("([^_]+_[^_]+_)(\d+)")
+re_symbol = re.compile(r'\b([^_]+_[^_]+_)(\d+)\b')
 with open(pd_name, "r") as pd:
     lines = pd.readlines()
 with open(pd_name, "w") as pd:

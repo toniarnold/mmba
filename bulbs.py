@@ -92,7 +92,7 @@ def percentiles(times):
     >>> percentiles(a)
     OrderedDict([('min', 1), ('1/4', 3), ('med', 5), ('3/4', 7), ('max', 10)])
     """
-    if (times):
+    if times:
         p = np.percentile(times, [0, 25, 50, 75, 100])
         d = collections.OrderedDict()
         def ms(sec):
