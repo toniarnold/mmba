@@ -6,7 +6,7 @@ Das Skript `bulbs.py` wird mit
 
     sudo make install
 
-auf einem Linux Server mit systemd, z.B. einem Raspberry Pi, installiert und als Dienst gestartet. Die Datei bulbs.pdz wird auf einem iOS-Gerät in PdParty importiert und gestartet. Ist das [Netzwerk](doc/network.md) mit den DNS-Namen von Bulbs und Server passend konfiguriert, fragt die App den aktuellen Zustand der Bulbs ab und stellt die Regler in der unteren Hälfte auf die ausgelesenen Werte ein.
+auf einem Linux Server mit systemd, z.B. einem Raspberry Pi, installiert und als Dienst gestartet. Die Datei bulbs.pdz wird auf einem iOS-Gerät in PdParty importiert und gestartet. Ist das [Netzwerk](network.md) mit den DNS-Namen von Bulbs und Server passend konfiguriert, fragt die App den aktuellen Zustand der Bulbs ab und stellt die Regler in der unteren Hälfte auf die ausgelesenen Werte ein.
 
 ## Manuelles Regeln
 
