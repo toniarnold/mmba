@@ -2,7 +2,7 @@
 
 .PHONY: all doc bulbs clean install uninstall
 
-all: doc bulbs bulbs.pdz countdown.pdz
+all: doc bulbs bulbs.pdz
 
 doc:
 	$(MAKE) -C doc
@@ -12,9 +12,6 @@ bulbs:
 
 bulbs.pdz: bulbs.pd/bulbs.pdz
 	cp bulbs.pd/bulbs.pdz ./
-
-countdown.pdz: bulbs.pd/countdown.pdz
-	cp bulbs.pd/countdown.pdz ./
 
 clean:
 	-rm bulbs.pdz
