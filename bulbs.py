@@ -17,9 +17,6 @@ BULBS = {
     "mitte" : "5CCF7FA0CA06",
 }
 
-# Anzahl Iterationen für das Performance-Profiling, v.a. der erste Aufruf kann länger dauern
-PROFILE_COUNT = 20
-
 
 
 import argparse
@@ -47,11 +44,12 @@ parser.add_argument("-v", "--verbose", action="store_true",
                     help="Request/Response-Logging. Gebe auch doctest output auf stdout aus.")
 parser.add_argument("-t", "--test", action="store_true",
                     help="Führe doctest aus. Setzt die Original-Bulbs-Konfiguration voraus.")
-parser.add_argument("-p", "--profile", action="store_true",
-                    help="Messe die Performance der Kommunikation mit den deklarierten Bulbs.")
-parser.add_argument("-m", "--mock", action="store_true",
-                    help="Kommuniziere nicht mit den Bulbs, antworte mit einer Stub-Message.")
+parser.add_argument("-p", "--profile", type=int, metavar='N', nargs='?', default=0, const=10,
+                    help="Messe die Performance der Kommunikation mit den deklarierten Bulbs mit N Wiederholungen.")
+parser.add_argument("-m", "--mock", type=float, metavar='SEC', nargs='?', default=0.0, const=0.1,
+                    help="Kommuniziere nicht mit den Bulbs, antworte nach SEC Sekunden Wartezeit mit einer konstanten Stub-Message.")
 args = parser.parse_args()
+print(args)
 
 
 
@@ -134,11 +132,14 @@ def post(bulb, command=None):
     >>> info == {'mode': 'hsv', 'battery': False, 'on': True, 'fw_version': '2.25', 'color': '90;80;70', 'reachable': True, 'ramp': 100, 'type': 'rgblamp', 'meshroot': False, 'power': 2.975}
     True
     """
-    if args.mock:   # for tracking down issue #1
+    if args.mock:   # Nur Mock-Request zur Analyse von issue #1
+        if args.verbose:
+            print("Mock post({0}) mit sleep({1})".format(command, args.mock))
+        time.sleep(args.mock)
         values = {'on': True, 'notifyurl': '', 'ramp': 100, 'color': '90;80;70', 'mode': 'hsv'}
         current[bulb] = values
         return values
-
+    
     request = urllib.request.Request(url(bulb))
     request.add_header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
     if not command is None:
@@ -309,25 +310,29 @@ def handle_echo(reader, writer):
     if args.profile:
         beginrequest = time.time()
     
-    data = yield from reader.read(255)
+    data = yield from reader.read(255)  # nur read() geht nicht
     puredata = data.decode().strip()
     if args.verbose:
         print("PureData: {}".format(repr(puredata)))
-    bulb, *cmdarg = puredata[:-1].split()  # entferne FUDI-';'
-    command = None
-    if cmdarg and (len(cmdarg) == 2):   # ignoriere ill-formed cmd arg
-        cmd, arg = cmdarg
-        x=int(float(arg))  # pd sliders sind 0..1
-        command = commands[cmd](bulb, x)
-    if args.verbose:
-        print("Command: {}".format(command))
-    reply=post(bulb, command)
-    if args.verbose:
-        print("Reply: {}".format(reply))
-    messages = netsend(bulb, reply)
-    writer.write(bytes(messages, 'utf-8'))
-    yield from writer.drain()
-    writer.close()
+    # issue #1 race condition: >1 netsend commands get joined when thy pile up
+    # causes 'socket.send() raised exception.' when pd is not listeing no more
+    fudis = filter(None, puredata.split(';'))
+    for fudi in fudis:
+        bulb, *cmdarg = fudi.strip().split()
+        command = None
+        if cmdarg and (len(cmdarg) == 2):   # ignoriere ill-formed cmd arg
+            cmd, arg = cmdarg
+            x=int(float(arg))  # pd sliders sind 0..1
+            command = commands[cmd](bulb, x)
+        if args.verbose:
+            print("Command: {}".format(command))
+        reply=post(bulb, command)
+        if args.verbose:
+            print("Reply: {}".format(reply))
+        messages = netsend(bulb, reply)
+        writer.write(bytes(messages, 'utf-8'))
+        yield from writer.drain()
+        writer.close()
     
     if args.profile:
         endresponse=time.time()
@@ -338,8 +343,8 @@ def handle_echo(reader, writer):
 
 # Performance-Profiling ausführen
 if args.profile:
-    print("Starte Bulb-Profiling mit {0} Wiederholungen".format(PROFILE_COUNT))
-    count = PROFILE_COUNT
+    count = args.profile
+    print("Starte Bulb-Profiling mit {0} Wiederholungen".format(count))
     profiles = collections.OrderedDict()
     for bulb in BULBS.keys():
         # Timer-Listen-Dictionaries leer initialisieren
