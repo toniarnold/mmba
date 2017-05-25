@@ -1,8 +1,9 @@
 #N canvas 183 305 450 300 10;
-#X obj 10 9 inlet;
-#X obj 10 31 list prepend;
-#X obj 10 53 list trim;
-#X obj 10 75 outlet;
+#X obj 10 34 inlet;
+#X obj 10 56 list prepend;
+#X obj 10 78 list trim;
+#X obj 10 100 outlet;
+#X text 10 6 Max/MSP prepend;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 2 0 3 0;

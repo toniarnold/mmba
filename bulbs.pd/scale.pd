@@ -1,19 +1,20 @@
 #N canvas 381 379 450 300 10;
-#X obj 177 51 loadbang;
-#X obj 24 29 inlet;
-#X obj 23 137 outlet;
-#X obj 23 115 expr (($f1 - $f2) / ($f3 - $f2) * ($f5 - $f4)) + $f4
+#X obj 177 81 loadbang;
+#X obj 23 58 inlet;
+#X obj 23 167 outlet;
+#X obj 23 145 expr (($f1 - $f2) / ($f3 - $f2) * ($f5 - $f4)) + $f4
 ;
-#X obj 80 79 float \$1;
-#X obj 145 79 float \$2;
-#X obj 213 79 float \$3;
-#X obj 289 79 float \$4;
-#X obj 100 29 inlet;
-#X obj 177 29 inlet;
-#X obj 255 29 inlet;
-#X obj 332 29 inlet;
-#X text 24 5 Skaliert den Eingangswertebereich \$1-\$2 auf \$3-\$4
+#X obj 80 109 float \$1;
+#X obj 145 109 float \$2;
+#X obj 213 109 float \$3;
+#X obj 289 109 float \$4;
+#X obj 100 59 inlet;
+#X obj 177 59 inlet;
+#X obj 255 59 inlet;
+#X obj 332 59 inlet;
+#X text 24 26 Skaliert den Eingangswertebereich \$1-\$2 auf \$3-\$4
 ;
+#X text 24 7 Max/MSP scale;
 #X connect 0 0 4 0;
 #X connect 0 0 5 0;
 #X connect 0 0 6 0;

@@ -1,6 +1,6 @@
 {
 	"name" : "mmba bulbs",
 	"author" : "Toni Arnold",
-	"description" : "Example wired with three LFOs for two bulbs - https://github.com/toniarnold/mmba",
+	"description" : "Example bulb controller wired with three LFOs for two bulbs - https://github.com/toniarnold/mmba",
 	"category" : "Light"
 }
