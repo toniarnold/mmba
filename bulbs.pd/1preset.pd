@@ -1,0 +1,7 @@
+#N canvas 807 274 72 126 10;
+#X obj 18 19 vradio 21 1 0 5 s_preset_1 r_preset_1 Pres -5 -8 0 13
+-262144 -1 -1 0;
+#X text 8 43 1;
+#X text 8 64 2;
+#X text 8 86 3;
+#X text 8 106 4;

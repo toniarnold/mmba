@@ -1,4 +1,4 @@
-#N canvas 391 483 570 400 10;
+#N canvas 416 377 600 504 10;
 #X obj 344 15 r s_hue_1;
 #X obj 488 15 r s_val_1;
 #X obj 415 15 r s_sat_1;
@@ -17,6 +17,30 @@
 #X text 17 75 Auslesen beim Startup, f 13;
 #X obj 17 128 bulb bulb-name server-name 8081;
 #X obj 450 209 sg r_on_1;
+#X obj 79 518 r s_hue_1;
+#X obj 223 518 r s_val_1;
+#X obj 150 518 r s_sat_1;
+#X obj 14 518 r s_on_1;
+#X obj 51 365 r get_bulb_1;
+#X obj 51 391 t b b b b;
+#X msg 68 418 r_hue_1;
+#X msg 131 418 r_sat_1;
+#X msg 197 417 r_val_1;
+#X obj 68 450 s get_values;
+#X obj 118 548 s value;
+#X text 22 301 Preset-Werte auslesen;
+#X obj 262 362 r s_on_1;
+#X obj 263 417 float;
+#X obj 263 389 r f_on_1;
+#X msg 9 418 f_on_1;
+#X obj 263 442 s r_on_1;
+#X text 329 358 Toggle toggelt auf bang \, daher die Werte in f_on_1
+zwischenspeichern \, um wie slider und radio auf bang nur den Wert
+auszugeben., f 38;
+#X text 8 324 Generiere Namens-Messages für jedes einzelne anzubangende
+receive \, das danach den gespeichertn Wert erhalten soll.;
+#X text 12 495 Auf Bang ausgegebene Ist-Werte sammeln und an value
+senden.;
 #X connect 0 0 9 0;
 #X connect 1 0 11 0;
 #X connect 2 0 10 0;
@@ -35,3 +59,19 @@
 #X connect 16 2 6 0;
 #X connect 16 3 7 0;
 #X connect 16 4 17 0;
+#X connect 18 0 28 0;
+#X connect 19 0 28 0;
+#X connect 20 0 28 0;
+#X connect 21 0 28 0;
+#X connect 22 0 23 0;
+#X connect 23 0 33 0;
+#X connect 23 1 24 0;
+#X connect 23 2 25 0;
+#X connect 23 3 26 0;
+#X connect 24 0 27 0;
+#X connect 25 0 27 0;
+#X connect 26 0 27 0;
+#X connect 30 0 31 1;
+#X connect 31 0 34 0;
+#X connect 32 0 31 0;
+#X connect 33 0 27 0;

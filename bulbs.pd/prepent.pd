@@ -1,9 +1,13 @@
-#N canvas 183 305 450 300 10;
-#X obj 10 34 inlet;
-#X obj 10 56 list prepend;
-#X obj 10 78 list trim;
-#X obj 10 100 outlet;
+#N canvas 183 305 298 220 10;
+#X obj 10 47 inlet;
+#X obj 10 69 list prepend;
+#X obj 10 91 list trim;
+#X obj 10 113 outlet;
 #X text 10 6 Max/MSP prepend;
+#X obj 123 38 symbol \$1;
+#X obj 123 8 loadbang;
 #X connect 0 0 1 0;
 #X connect 1 0 2 0;
 #X connect 2 0 3 0;
+#X connect 5 0 1 1;
+#X connect 6 0 5 0;

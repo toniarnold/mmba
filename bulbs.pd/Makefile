@@ -2,6 +2,7 @@
 PD = _main.pd thumb.png info.json \
      bulb.pd bulbs_r_s.pd \
      lfo.pd lfos_r_s.pd targets_r_s.pd \
+     presets.pd presets_r_s.pd \
      rg.pd sf.pd sg.pd \
      spigot8.pd 4spigot.pd \
      prepent.pd scale.pd speedlim.pd

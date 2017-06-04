@@ -15,7 +15,6 @@ bulbs.pdz: bulbs.pd/bulbs.pdz
 
 clean:
 	-rm bulbs.pdz
-	-rm countdown.pdz
 
 install:
 	cp bulbs.py /etc/network/

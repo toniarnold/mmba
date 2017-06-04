@@ -8,11 +8,13 @@ Das Skript `bulbs.py` wird mit
 
 auf einem Linux Server mit systemd, z.B. einem Raspberry Pi, installiert und als Dienst gestartet. Die Datei bulbs.pdz wird auf einem iOS-Gerät in PdParty importiert und gestartet. Ist das [Netzwerk](network.md) mit den DNS-Namen von Bulbs und Server passend konfiguriert, fragt die App den aktuellen Zustand der Bulbs ab und stellt die Regler in der unteren Hälfte auf die ausgelesenen Werte ein.
 
+
 ## Manuelles Regeln
 
 Die breiten Regler in der unteren Hälfte entsprechen dem Farbrad und dem Helligkeitsregler in der nativen myStrom App: Hue regelt den Farbton, Sat die Farbsättigung (Weissanteil) und Val den Helligkeitswert.
 
 ![HSV Regler](hsv.png)
+
 
 ## Automatische Steuerung
 
@@ -32,3 +34,8 @@ Die Regler Lo und Hi begrenzen bei allen Wellenformen den Wertebereich. Ist Lo h
 * Tri (Dreieck): Freq = Schwingfrequenz, Mod = Schiefe, am oberen bzw. unteren Ende wird das Dreieck zum Sägezahn.
 * Rec (Rechteck): Freq = Schwingfrequenz Mod = Pulsbreite, an den Extremen wird die Wellennadel zu kurz, um wirksam zu sein.
 * Aud (Audio): Freq = Zentrum des Bandpassfilters, Mod = Empfindlichkeit auf Transienten als Abweichung von der Durchschnittslautstärke über ca. 2 Sekunden.
+
+
+## Voreinstellungen
+
+Die senkrechten Preset-Schaltknöpfe in der Mitte aktivieren das jeweilge Preset. Ganz oben sind die Voreinstellungen deaktiviert, darunter können 4 verschiedene Presets durch Umschalten aktiviert werden. Werden bei aktivem Preset die Regler verändert, speichert es sich automatisch nach 5 Sekunden in eine der Dateien `preset1.txt` - `preset4.txt`.
