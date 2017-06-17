@@ -1,15 +1,18 @@
 #N canvas 404 198 595 300 10;
-#X obj 16 64 spigot 1;
+#X obj 13 64 spigot 1;
 #X obj 120 34 loadbang;
-#X obj 121 64 symbol \$1;
-#X obj 68 33 inlet;
-#X obj 16 34 inlet;
+#X obj 120 63 symbol \$1;
+#X obj 68 35 inlet;
+#X obj 13 35 inlet;
 #X text 13 8 signal;
 #X text 68 8 gate;
-#X obj 16 101 send \$1;
-#X text 193 7 Send mit Gate \, um Feedback-Loops zu unterbinden.;
+#X obj 13 93 prepent set;
+#X text 193 8 Send Feedback mit set-Präfix an die GUI-Elemente duch
+ein Gate \, um den Feedback-Brems-Effekt zu unterbinden., f 38;
+#X obj 13 122 send;
 #X connect 0 0 7 0;
 #X connect 1 0 2 0;
-#X connect 2 0 7 1;
+#X connect 2 0 9 1;
 #X connect 3 0 0 1;
 #X connect 4 0 0 0;
+#X connect 7 0 9 0;

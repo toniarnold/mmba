@@ -4,7 +4,8 @@ import argparse
 import re
 import sys
 
-helptext="./renum.py 1lfo.pd 3  Nummeriert direkt in der Datei 1lfo.pd alle send/receive wie s_lfo_1 neu mit s_lfo_3" 
+helptext = """./renum.py 1lfo.pd 3  Nummeriert direkt in der Datei 1lfo.pd
+alle send/receive wie s_lfo_1 neu mit s_lfo_3""" 
 parser = argparse.ArgumentParser(description=helptext)
 parser.add_argument("name", type=str, help="Dateiname, z.B. 1lfo.pd")
 parser.add_argument("nummer", type=int, help="Neue Nummer")

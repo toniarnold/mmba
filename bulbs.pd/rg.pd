@@ -1,4 +1,4 @@
-#N canvas 165 351 604 440 10;
+#N canvas 548 351 604 440 10;
 #X obj 16 34 inlet;
 #X text 13 287 signal;
 #X obj 16 67 route feedback;
@@ -11,14 +11,14 @@
 #X obj 86 192 delay 300;
 #X obj 67 147 t a b b;
 #X obj 67 111 speedlim 200;
-#X text 219 68 Speed-Limit per Regler \, nicht global \, explizite
-feedback-message oder LFO triggert nicht das speedlim., f 36;
-#X text 224 168 Receive mit Feedback-Gate-Message \, d.h. vor dem Senden
+#X text 166 189 Receive mit Feedback-Gate-Message \, d.h. vor dem Senden
 wird das entsprechende feedback-send sg geschlossen. delay 300 ist
 ein pragmatischer Wert \, d.h. die Zeit \, von der der Finger einen
 Slider loslässt \, bis dieser wieder auf feedback reagiert., f 35
 ;
 #X obj 136 70 r s_speedlim;
+#X text 219 68 Speed-Limit per Regler \, nicht global \, explizite
+feedback-Message der LFO triggert nicht das speedlim., f 36;
 #X connect 0 0 2 0;
 #X connect 2 0 3 0;
 #X connect 2 1 11 0;
@@ -29,4 +29,4 @@ Slider loslässt \, bis dieser wieder auf feedback reagiert., f 35
 #X connect 10 1 9 0;
 #X connect 10 2 7 0;
 #X connect 11 0 10 0;
-#X connect 14 0 11 1;
+#X connect 13 0 11 1;

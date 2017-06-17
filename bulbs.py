@@ -25,31 +25,38 @@ pp = pprint.PrettyPrinter(width=1)
 import collections
 import doctest
 import time
+import datetime
 import urllib.request
 import urllib.parse
 import json
 import colorsys
 import asyncio
+import socket
 import random
 import numpy as np
 
 
 
 bulb_namen = ", ".join(sorted(BULBS.keys()))
-helptext="""Webserver, welcher via REST-API über Port {0} 
+helptext = """Webserver, welcher via REST-API über Port {0} 
     mit den mystrom-Bulbs kommuniziert. Registrierte Bulbs:
     """.format(PORT) + bulb_namen
 parser = argparse.ArgumentParser(description=helptext)
 parser.add_argument("-v", "--verbose", action="store_true",
-                    help="Request/Response-Logging. Gebe auch doctest output auf stdout aus.")
+    help="""Request/Response-Logging. Gebe auch doctest 
+    output auf stdout aus.""")
 parser.add_argument("-t", "--test", action="store_true",
-                    help="Führe doctest aus. Setzt die Original-Bulbs-Konfiguration voraus.")
-parser.add_argument("-p", "--profile", type=int, metavar='N', nargs='?', default=0, const=10,
-                    help="Messe die Performance der Kommunikation mit den deklarierten Bulbs mit N Wiederholungen.")
-parser.add_argument("-m", "--mock", type=float, metavar='SEC', nargs='?', default=0.0, const=0.1,
-                    help="Kommuniziere nicht mit den Bulbs, antworte nach SEC Sekunden Wartezeit mit einer konstanten Stub-Message.")
+    help="""ühre doctest aus. Setzt die
+        Original-Bulbs-Konfiguration voraus.""")
+parser.add_argument("-p", "--profile", type=int, metavar='N', nargs='?',
+    default=0, const=10,
+    help="""Messe die Performance der Kommunikation mit den 
+        deklarierten Bulbs mit N Wiederholungen.""")
+parser.add_argument("-m", "--mock", type=float, metavar='SEC', nargs='?',
+    default=0.0, const=0.1,
+    help="""Kommuniziere nicht mit den Bulbs, antworte nach SEC
+        Sekunden Wartezeit mit einer konstanten Stub-Message.""")
 args = parser.parse_args()
-print(args)
 
 
 
@@ -58,12 +65,15 @@ print(args)
 # Verwendete Messreihen
 echo_times = []
 post_times = []
+netsend_times = []
 
 def pprint_times():
     print("\nEcho-Antwortzeiten")
     pp.pprint(percentiles(echo_times))
     print("Reine Bulb-Antwortzeiten")
     pp.pprint(percentiles(post_times))
+    print("netsend Reply-Zeiten")
+    pp.pprint(percentiles(netsend_times))
 
 
 def profile(times):
@@ -103,7 +113,16 @@ def percentiles(times):
         d['3/4'] = ms(p[3])
         d['max'] = ms(p[4])
         return d
+
     
+
+def now():
+    """String-Zeitstempel für args.verbose
+    """
+    now = datetime.datetime.now()
+    return now.strftime('%H:%M:%S.%f')
+
+
 
     
 # Kommunikation mit der Bulb
@@ -241,11 +260,29 @@ def split_color(color):
     return h, s, v
 
 
-def netsend(bulb, values):
-    r"""Erzeuge aus der Bulb-Reply eine netsend-Reply für ein retreceive-Feedback im GUI
+
+# Tiefe der Verschachtelung asynchroner Aufrufe
+tiefe = 0
+
+@profile(netsend_times)
+def netsend(ip, bulb, values):
+    """Entspricht netsend zu netreceive in pd"""
+    messages = fudi(bulb, values)
+    if args.verbose:
+        global tiefe
+        print("{} {} >PD:   {}".format(now(), tiefe, messages.replace('\n', ' ')))
+        tiefe = tiefe -1
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((ip, PORT))
+    sock.sendall(bytes(messages, 'ascii'))  # "ASCII text messages compatible with Pd"
+    sock.close()
+
+
+def fudi(bulb, values):
+    r"""Erzeuge aus der Bulb-Reply eine netsend-Reply im FUDI-Protokoll für ein retreceive-Feedback im GUI
     
     >>> ack = {'on': True, 'notifyurl': '', 'ramp': 100, 'color': '90;80;70', 'mode': 'hsv'}
-    >>> msg = netsend('mitte', ack)
+    >>> msg = fudi('mitte', ack)
     >>> msg == 'bulb;\nmitte;\non;\n1;\nhue;\n90;\nsat;\n80;\nval;\n70;\nrgb;\n-6992420;\neof;\n'
     True
     """
@@ -309,33 +346,40 @@ def handle_echo(reader, writer):
     # Als coroutine kein @profile(echo_times) möglich, da formal sofort return
     if args.profile:
         beginrequest = time.time()
+    (request_ip, _) = writer.get_extra_info('peername')
     
-    data = yield from reader.read(255)  # nur read() geht nicht
+    # Schritt 1: Handle und beende den Request von pd
+    data = yield from reader.read(255) 
     puredata = data.decode().strip()
     if args.verbose:
-        print("PureData: {}".format(repr(puredata)))
-    # issue #1 race condition: >1 netsend commands get joined when thy pile up
+        global tiefe
+        tiefe = tiefe + 1
+        print("{} {} <PD:   {}".format(now(), tiefe, repr(puredata)))
+    # issue #1 race condition: >1 netsend commands get joined when they pile up
     # causes 'socket.send() raised exception.' when pd is not listeing no more
-    fudis = filter(None, puredata.split(';'))
-    for fudi in fudis:
-        bulb, *cmdarg = fudi.strip().split()
+    messages = filter(None, puredata.split(';'))
+    for msg in messages:
+        bulb, *cmdarg = msg.strip().split()
         command = None
         if cmdarg and (len(cmdarg) == 2):   # ignoriere ill-formed cmd arg
             cmd, arg = cmdarg
-            x=int(float(arg))  # pd sliders sind 0..1
-            command = commands[cmd](bulb, x)
-        if args.verbose:
-            print("Command: {}".format(command))
-        reply=post(bulb, command)
-        if args.verbose:
-            print("Reply: {}".format(reply))
-        messages = netsend(bulb, reply)
-        writer.write(bytes(messages, 'utf-8'))
+            x = int(float(arg))  # pd sliders sind 0..1
+            command = commands[cmd](bulb, x)       
+        # issue #1: don't wait for a reply in pd
         yield from writer.drain()
         writer.close()
-    
+        
+        # Schritt 2: Request an die u.U. langsame Bulb in einem separaten Thread
+        if args.verbose:
+            print("{} {} >Bulb: {}".format(now(), tiefe, command)) 
+        reply = yield from loop.run_in_executor(None, post, bulb, command)
+        if args.verbose:
+            print("{} {} <Bulb: {}".format(now(), tiefe, reply))
+        # Sende Response mit netsend an das netreceive in pd
+        netsend(request_ip, bulb, reply)
+ 
     if args.profile:
-        endresponse=time.time()
+        endresponse = time.time()
         echo_times.append(endresponse - beginrequest)
 
 
@@ -348,8 +392,8 @@ if args.profile:
     profiles = collections.OrderedDict()
     for bulb in BULBS.keys():
         # Timer-Listen-Dictionaries leer initialisieren
-        times_bang=[]
-        times_on=[]
+        times_bang = []
+        times_on = []
         times_color = []
         bulb_profile = collections.OrderedDict([
             ('bang', times_bang),
@@ -358,7 +402,7 @@ if args.profile:
         ])
         profiles[bulb] = bulb_profile
         
-        # Profilieren
+        # Jeden Request-Typ einzeln messen
         for i in range(0, count):
             post(bulb)
         bulb_profile['bang'] = percentiles(post_times)
@@ -380,7 +424,7 @@ if args.profile:
     
     
 
-# Alle doctests in obigen Funktionen ausführen
+# Wenn verlangt alle doctests in obigen Funktionen ausführen
 if args.test:
     doctest.testmod(verbose=args.verbose)
 
@@ -392,6 +436,7 @@ loop = asyncio.get_event_loop()
 coro = asyncio.start_server(handle_echo, '', PORT, loop=loop)
 server = loop.run_until_complete(coro)
 
+# Bang an alle Bulbs
 if args.verbose:
     print("Frage die konfigurierten Bulbs {0} ab".format(bulb_namen))
 get_current()
@@ -406,5 +451,7 @@ if __name__ == "__main__":
         if args.profile:
             pprint_times()
     server.close()
+    for task in asyncio.Task.all_tasks():
+        task.cancel()   # post-Tasks
     loop.run_until_complete(server.wait_closed())
     loop.close()

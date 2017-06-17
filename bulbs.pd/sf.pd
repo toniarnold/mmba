@@ -1,14 +1,14 @@
 #N canvas 641 380 602 351 10;
-#X obj 18 32 inlet;
+#X obj 15 36 inlet;
 #X text 15 6 signal;
-#X obj 17 64 prepent feedback;
-#X obj 147 31 loadbang;
-#X obj 147 63 symbol \$1;
-#X obj 17 96 send \$1;
-#X text 218 2 Send mit zusätzlichem feedback-Präfix \, um in sd das
-Schliessen des Feedback-Gate zu unterdrücken. Für LFO-AUtomation
-und GET-Requests., f 23;
+#X obj 15 68 prepent feedback;
+#X obj 132 36 loadbang;
+#X obj 132 68 symbol \$1;
+#X text 204 6 Send mit zusätzlichem feedback-Präfix \, um im rg von
+bulbs_r_s.pd das Schliessen des Feedback-Gate zu unterdrücken. Für
+LFO-AUtomation und GET-Requests., f 23;
+#X obj 15 100 send;
 #X connect 0 0 2 0;
-#X connect 2 0 5 0;
+#X connect 2 0 6 0;
 #X connect 3 0 4 0;
-#X connect 4 0 5 1;
+#X connect 4 0 6 1;
