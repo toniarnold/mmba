@@ -17,6 +17,8 @@ BULBS = {
     "mitte" : "5CCF7FA0CA06",
 }
 
+# Ab dieser Warteschlangenlänge werden weitere Requests ignoriert
+MAX_PUFFER = 10
 
 
 import argparse
@@ -261,17 +263,13 @@ def split_color(color):
 
 
 
-# Tiefe der Verschachtelung asynchroner Aufrufe
-tiefe = 0
-
 @profile(netsend_times)
 def netsend(ip, bulb, values):
     """Entspricht netsend zu netreceive in pd"""
     messages = fudi(bulb, values)
     if args.verbose:
-        global tiefe
         print("{} {} >PD:   {}".format(now(), tiefe, messages.replace('\n', ' ')))
-        tiefe = tiefe -1
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((ip, PORT))
     sock.sendall(bytes(messages, 'ascii'))  # "ASCII text messages compatible with Pd"
@@ -335,6 +333,9 @@ def rgb_2_color(r, g, b):
 
 
 
+# Tiefe der Verschachtelung asynchroner Aufrufe, entspricht Warteschlangenlänge
+tiefe = 0
+
 @asyncio.coroutine
 def handle_echo(reader, writer):
     """Nehme Kommandos von PureData entgegen und sende sie an die Bulb
@@ -343,44 +344,56 @@ def handle_echo(reader, writer):
     nc localhost 8081
     nc dahomey.local 8081
     """
-    # Als coroutine kein @profile(echo_times) möglich, da formal sofort return
-    if args.profile:
-        beginrequest = time.time()
-    (request_ip, _) = writer.get_extra_info('peername')
-    
-    # Schritt 1: Handle und beende den Request von pd
-    data = yield from reader.read(255) 
-    puredata = data.decode().strip()
-    if args.verbose:
-        global tiefe
-        tiefe = tiefe + 1
-        print("{} {} <PD:   {}".format(now(), tiefe, repr(puredata)))
-    # issue #1 race condition: >1 netsend commands get joined when they pile up
-    # causes 'socket.send() raised exception.' when pd is not listeing no more
-    messages = filter(None, puredata.split(';'))
-    for msg in messages:
-        bulb, *cmdarg = msg.strip().split()
-        command = None
-        if cmdarg and (len(cmdarg) == 2):   # ignoriere ill-formed cmd arg
-            cmd, arg = cmdarg
-            x = int(float(arg))  # pd sliders sind 0..1
-            command = commands[cmd](bulb, x)       
-        # issue #1: don't wait for a reply in pd
-        yield from writer.drain()
+    # Verhindere minutenlange Warteschlangen
+    global tiefe
+    if tiefe >= MAX_PUFFER:
+        if args.verbose:
+            print("{} {} !PD:   >MAX_PUFFER".format(now(), tiefe + 1))
         writer.close()
-        
-        # Schritt 2: Request an die u.U. langsame Bulb in einem separaten Thread
+        return
+    tiefe += 1
+    
+    try:
+        # Als coroutine kein @profile(echo_times) möglich, da formal sofort return
+        if args.profile:
+            beginrequest = time.time()
+
+        (request_ip, _) = writer.get_extra_info('peername')
+
+        # Schritt 1: Handle und beende den Request von pd
+        data = yield from reader.read(255) 
+        puredata = data.decode().strip()
         if args.verbose:
-            print("{} {} >Bulb: {}".format(now(), tiefe, command)) 
-        reply = yield from loop.run_in_executor(None, post, bulb, command)
-        if args.verbose:
-            print("{} {} <Bulb: {}".format(now(), tiefe, reply))
-        # Sende Response mit netsend an das netreceive in pd
-        netsend(request_ip, bulb, reply)
- 
-    if args.profile:
-        endresponse = time.time()
-        echo_times.append(endresponse - beginrequest)
+            print("{} {} <PD:   {}".format(now(), tiefe, repr(puredata)))
+        # issue #1 race condition: >1 netsend commands get joined when they pile up
+        # causes 'socket.send() raised exception.' when pd is not listeing no more
+        messages = filter(None, puredata.split(';'))
+        for msg in messages:
+            bulb, *cmdarg = msg.strip().split()
+            command = None
+            if cmdarg and (len(cmdarg) == 2):   # ignoriere ill-formed cmd arg
+                cmd, arg = cmdarg
+                x = int(float(arg))  # pd sliders sind 0..1
+                command = commands[cmd](bulb, x)       
+            # issue #1: don't wait for a reply in pd
+            yield from writer.drain()
+            writer.close()
+
+            # Schritt 2: Request an die u.U. langsame Bulb in einem separaten Thread
+            if args.verbose:
+                print("{} {} >Bulb: {}".format(now(), tiefe, command)) 
+            reply = yield from loop.run_in_executor(None, post, bulb, command)
+            if args.verbose:
+                print("{} {} <Bulb: {}".format(now(), tiefe, reply))
+            # Sende Response mit netsend an das netreceive in pd
+            netsend(request_ip, bulb, reply)
+
+        if args.profile:
+            endresponse = time.time()
+            echo_times.append(endresponse - beginrequest)
+    
+    finally:
+        tiefe -= 1
 
 
 

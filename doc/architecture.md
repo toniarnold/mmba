@@ -44,8 +44,8 @@ Wird ein Regler im GUI verändert, erfolgt eine Message an die Bulb. Diese antwo
 
 Soweit, so simpel, dafür wäre kein Werte-Feedback nötig. Doch beim Startup erfolgt ein leerer Loadbang-GET-Request an jede Bulb, welche die gegenwärtigen Parameter-Werte ausliest und ans GUI zurückmeldet, so dass dieses synchronisiert wird. Diese Message ist ausführlicher (enthält z.B. den Stromverbrauch), es werden aber fürs GUI dieselben Parameter rausgefiltert:
 
-    9:31:28.491091 >Bulb: None
-    09:31:28.515060 <Bulb: {'ramp': 100, 'meshroot': False, 'type': 'rgblamp', 'on': True, 'reachable': True, 'power': 5.1, 'color': '43;0;100', 'fw_version': '2.25', 'mode': 'hsv', 'battery': False}
+    >Bulb: None
+    <Bulb: {'ramp': 100, 'meshroot': False, 'type': 'rgblamp', 'on': True, 'reachable': True, 'power': 5.1, 'color': '43;0;100', 'fw_version': '2.25', 'mode': 'hsv', 'battery': False}
 
 Das Feedback erfolgt generalisiert immer. Daher müssen Feedback-Loops unterbunden werden, und zwar in zwei Fällen: Derjenige Regler, welcher gerade kontinuierlich bewegt wird, darf nicht auch noch ein zeitverzögertes Feedback mit vorhergehenden Werten erhalten, denn das führt zu einem Brems-Effekt. Zweitens darf eine Feedback-Message an einen Regler nicht nochmal eine identische Message an die Bulb senden, welche wiederum Feedback auslösen würde. Daher werden nicht direkt die send/receive-Objekte von Pure Data verwendet, sondern folgende Objekte:
 
@@ -55,4 +55,4 @@ Das Feedback erfolgt generalisiert immer. Daher müssen Feedback-Loops unterbund
 
 ### Presets
 
-Die Presets verwenden `qlist`-Objekt, um sämtliche GUI-Parameter-Werte zu speichern. Dazu wird an alle GUI-Objekte ein Bang gesendet, damit dieses den aktuellen Wert an das `value`-Receive-Objekt sendet, wo es in ein `textfile` gespeichert wird. Umgekehrt sendet die `qlist` beim Laden den Wert an die jeweiligen Receives der GUI-Objekte (nicht direkt an die Bulb wie bei den LFOs), was dann die entsprechenden Messages an die Bulb auslöst, inklusive Receive-Gate-Timer, genau wie wenn die Regler von Hand bewegt worden wären.
+Die Presets verwenden ein `qlist`-Objekt, um sämtliche GUI-Parameter-Werte zu speichern. Dazu wird an alle GUI-Objekte ein Bang gesendet, damit dieses den aktuellen Wert an das `value`-Receive-Objekt sendet, wo es in ein `textfile` gespeichert wird. Umgekehrt sendet die `qlist` beim Laden den Wert an die jeweiligen Receives der GUI-Objekte (nicht direkt an die Bulb wie bei den LFOs), was dann die entsprechenden Messages an die Bulb auslöst, inklusive Receive-Gate-Timer, genau wie wenn die Regler von Hand bewegt worden wären.
