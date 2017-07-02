@@ -27,7 +27,7 @@
 #X msg 197 417 r_val_1;
 #X obj 68 450 s get_values;
 #X obj 118 548 s value;
-#X text 22 301 Preset-Werte auslesen;
+#X text 9 299 Preset-Werte auslesen;
 #X obj 262 362 r s_on_1;
 #X obj 263 417 float;
 #X obj 263 389 r f_on_1;
@@ -36,13 +36,13 @@
 #X text 329 358 Toggle toggelt auf bang \, daher die Werte in f_on_1
 zwischenspeichern \, um wie slider und radio auf bang nur den Wert
 auszugeben., f 38;
-#X text 8 324 Generiere Namens-Messages für jedes einzelne anzubangende
-receive \, das danach den gespeichertn Wert erhalten soll.;
 #X text 12 495 Auf Bang ausgegebene Ist-Werte sammeln und an value
 senden.;
 #X msg 17 103 bang;
 #X obj 450 209 s r_on_1;
 #X text 451 227 color;
+#X text 8 324 Generiere Namens-Messages für jedes einzelne anzubangende
+receive \, das danach den gespeicherten Wert erhalten soll.;
 #X connect 0 0 9 0;
 #X connect 1 0 11 0;
 #X connect 2 0 10 0;
@@ -55,12 +55,12 @@ senden.;
 #X connect 10 1 6 1;
 #X connect 11 0 16 4;
 #X connect 11 1 7 1;
-#X connect 12 0 37 0;
+#X connect 12 0 36 0;
 #X connect 16 0 4 0;
 #X connect 16 1 5 0;
 #X connect 16 2 6 0;
 #X connect 16 3 7 0;
-#X connect 16 4 38 0;
+#X connect 16 4 37 0;
 #X connect 17 0 27 0;
 #X connect 18 0 27 0;
 #X connect 19 0 27 0;
@@ -77,4 +77,4 @@ senden.;
 #X connect 30 0 33 0;
 #X connect 31 0 30 0;
 #X connect 32 0 26 0;
-#X connect 37 0 16 0;
+#X connect 36 0 16 0;

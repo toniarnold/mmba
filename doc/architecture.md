@@ -35,6 +35,68 @@ Daher ist obiges Send-Receive-Sequenzdiagramm eine Vereinfachung. Der `bulbs.py`
 ![Sequenzdiagramm](sequence.png)
 
 
+### Performance Profiler
+
+Das `bulbs.py` Skript startet mit  `-p [Anzahl]` einen Profiler-Lauf mit standardmässig 10 Wiederholungen. Die physischen Bulbs haben eine relativ grosse Varianz in den Antwortzeiten, unten ein typischer Profiler-Output. Ganz links steht der Name der Bulb, dann folgen die drei gemessenen Typen von Nachrichten, rechts steht die durchschnittliche Antwortzeit in ms, verteilt auf die fünf Quantile Minimum, 25% Schnellste, Median, 25% Langsamste und Maximum.
+
+    $ ./bulbs.py -p 100
+    Starte Bulb-Profiling mit 100 Wiederholungen
+    {'mitte': {'bang': {'min': 12,
+                        '1/4': 19,
+                        'med': 20,
+                        '3/4': 24,
+                        'max': 89},
+               'on': {'min': 10,
+                      '1/4': 18,
+                      'med': 20,
+                      '3/4': 20,
+                      'max': 58},
+               'color': {'min': 15,
+                         '1/4': 20,
+                         'med': 22,
+                         '3/4': 24,
+                         'max': 99}},
+     'eingang': {'bang': {'min': 16,
+                          '1/4': 22,
+                          'med': 24,
+                          '3/4': 32,
+                          'max': 100},
+                 'on': {'min': 15,
+                        '1/4': 24,
+                        'med': 28,
+                        '3/4': 33,
+                        'max': 127},
+                 'color': {'min': 16,
+                           '1/4': 22,
+                           'med': 24,
+                           '3/4': 29,
+                           'max': 44}}}
+
+    Profiling von Requests geht weiter bis <ctrl>+c
+    Starte bulbs.py server auf ('0.0.0.0', 8081)
+    ^C
+    Echo-Antwortzeiten
+    {'min': 17,
+     '1/4': 26,
+     'med': 30,
+     '3/4': 45,
+     'max': 412}
+    Reine Bulb-Antwortzeiten
+    {'min': 13,
+     '1/4': 21,
+     'med': 24,
+     '3/4': 35,
+     'max': 279}
+    netsend Reply-Zeiten
+    {'min': 1,
+     '1/4': 1,
+     'med': 1,
+     '3/4': 2,
+     'max': 8}
+
+
+
+
 ### Regler-Messages, Bang und Feedback-Messages
 
 Wird ein Regler im GUI verändert, erfolgt eine Message an die Bulb. Diese antwortet per myStrom-REST-Protokoll mit allen Parameter-Werten, hier ein Beispiel:
@@ -55,4 +117,4 @@ Das Feedback erfolgt generalisiert immer. Daher müssen Feedback-Loops unterbund
 
 ### Presets
 
-Die Presets verwenden ein `qlist`-Objekt, um sämtliche GUI-Parameter-Werte zu speichern. Dazu wird an alle GUI-Objekte ein Bang gesendet, damit dieses den aktuellen Wert an das `value`-Receive-Objekt sendet, wo es in ein `textfile` gespeichert wird. Umgekehrt sendet die `qlist` beim Laden den Wert an die jeweiligen Receives der GUI-Objekte (nicht direkt an die Bulb wie bei den LFOs), was dann die entsprechenden Messages an die Bulb auslöst, inklusive Receive-Gate-Timer, genau wie wenn die Regler von Hand bewegt worden wären.
+Die Presets verwenden ein `qlist`-Objekt, um sämtliche GUI-Parameter-Werte zu speichern. Dazu wird an alle GUI-Objekte ein Bang gesendet, damit dieses den aktuellen Wert an das `value` Receive-Objekt sendet, wo es in ein `textfile` gespeichert wird. Umgekehrt sendet die `qlist` beim Laden den Wert an die jeweiligen Receives der GUI-Objekte (nicht direkt an die Bulb wie bei den LFOs), was dann die entsprechenden Messages an die Bulb auslöst, inklusive Receive-Gate-Timer, genau wie wenn die Regler von Hand bewegt worden wären.

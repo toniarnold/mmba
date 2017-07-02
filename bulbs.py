@@ -18,7 +18,7 @@ BULBS = {
 }
 
 # Ab dieser Warteschlangenlänge werden weitere Requests ignoriert
-MAX_PUFFER = 10
+MAX_PUFFER = 25
 
 
 import argparse
@@ -349,6 +349,9 @@ def handle_echo(reader, writer):
     if tiefe >= MAX_PUFFER:
         if args.verbose:
             print("{} {} !PD:   >MAX_PUFFER".format(now(), tiefe + 1))
+        # Gib auf, aber stoppe zuvor alle hängigen Requests
+        for task in asyncio.Task.all_tasks():
+            task.cancel()
         writer.close()
         return
     tiefe += 1
@@ -386,7 +389,7 @@ def handle_echo(reader, writer):
             if args.verbose:
                 print("{} {} <Bulb: {}".format(now(), tiefe, reply))
             # Sende Response mit netsend an das netreceive in pd
-            netsend(request_ip, bulb, reply)
+            yield from loop.run_in_executor(None, netsend, request_ip, bulb, reply)
 
         if args.profile:
             endresponse = time.time()
@@ -463,8 +466,9 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         if args.profile:
             pprint_times()
+
     server.close()
     for task in asyncio.Task.all_tasks():
-        task.cancel()   # post-Tasks
+        task.cancel()
     loop.run_until_complete(server.wait_closed())
     loop.close()
