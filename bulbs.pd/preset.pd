@@ -78,6 +78,8 @@ die Liste \, Symbol voransetzen und zum textfile hinzufügen., f 46
 #X text 300 532 Beim Startup kein Preset angewählt;
 #X obj 303 30 s r_preset_1;
 #X text 382 8 Preset direkt hier anwählen;
+#X obj 595 554 localgui;
+#X text 573 527 TODO: enable presets on server;
 #X connect 0 0 38 0;
 #X connect 1 0 2 0;
 #X connect 1 1 3 0;
@@ -145,4 +147,5 @@ die Liste \, Symbol voransetzen und zum textfile hinzufügen., f 46
 #X connect 62 0 61 0;
 #X connect 63 0 62 0;
 #X connect 63 1 24 0;
-#X connect 64 0 35 0;
+#X connect 64 0 68 0;
+#X connect 68 0 35 0;

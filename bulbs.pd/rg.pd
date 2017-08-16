@@ -1,32 +1,41 @@
-#N canvas 548 351 604 440 10;
+#N canvas 137 182 490 413 10;
 #X obj 16 34 inlet;
-#X text 13 287 signal;
-#X obj 16 67 route feedback;
-#X obj 16 267 outlet;
-#X text 13 8 signal;
-#X obj 86 269 outlet;
-#X text 86 289 gate;
-#X msg 120 221 0;
-#X msg 86 222 1;
-#X obj 86 192 delay 300;
-#X obj 67 147 t a b b;
-#X obj 67 111 speedlim 200;
-#X text 166 189 Receive mit Feedback-Gate-Message \, d.h. vor dem Senden
+#X text 13 350 signal;
+#X obj 16 130 route feedback;
+#X obj 16 330 outlet;
+#X obj 86 332 outlet;
+#X text 86 352 gate;
+#X msg 120 284 0;
+#X msg 86 285 1;
+#X obj 86 255 delay 300;
+#X obj 67 210 t a b b;
+#X obj 67 174 speedlim 200;
+#X text 166 252 Receive mit Feedback-Gate-Message \, d.h. vor dem Senden
 wird das entsprechende feedback-send sg geschlossen. delay 300 ist
 ein pragmatischer Wert \, d.h. die Zeit \, von der der Finger einen
 Slider loslässt \, bis dieser wieder auf feedback reagiert., f 35
 ;
-#X obj 136 70 r s_speedlim;
-#X text 219 68 Speed-Limit per Regler \, nicht global \, explizite
-feedback-Message der LFO triggert nicht das speedlim., f 36;
-#X connect 0 0 2 0;
+#X obj 136 133 r s_speedlim;
+#X obj 16 98 rp;
+#X obj 84 34 loadbang;
+#X obj 84 65 symbol \$1;
+#X text 15 8 Message;
+#X text 83 8 Receive-Name;
+#X text 313 8 receive mit gate Nach erhalt einer Message wird das Gate
+geschlossen., f 20;
+#X text 219 131 Speed-Limit per Regler \, nicht global \, feedback-Präfix
+der LFO triggert nicht das speedlim., f 36;
+#X connect 0 0 13 0;
 #X connect 2 0 3 0;
-#X connect 2 1 11 0;
-#X connect 7 0 5 0;
-#X connect 8 0 5 0;
-#X connect 9 0 8 0;
-#X connect 10 0 3 0;
-#X connect 10 1 9 0;
-#X connect 10 2 7 0;
-#X connect 11 0 10 0;
-#X connect 13 0 11 1;
+#X connect 2 1 10 0;
+#X connect 6 0 4 0;
+#X connect 7 0 4 0;
+#X connect 8 0 7 0;
+#X connect 9 0 3 0;
+#X connect 9 1 8 0;
+#X connect 9 2 6 0;
+#X connect 10 0 9 0;
+#X connect 12 0 10 1;
+#X connect 13 0 2 0;
+#X connect 14 0 15 0;
+#X connect 15 0 13 1;

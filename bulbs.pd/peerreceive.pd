@@ -1,0 +1,27 @@
+#N canvas 169 264 379 335 10;
+#X obj 21 124 netreceive;
+#X obj 21 37 loadbang;
+#X obj 21 66 float \$1;
+#X obj 21 161 list split 1;
+#X obj 42 278 send;
+#X obj 21 219 list;
+#X obj 21 190 t b s;
+#X obj 21 248 list trim;
+#X text 104 123 Bsp: r_on_1 color 1 \;;
+#X text 68 189 Zuerst das Symbol als das send-Ziel sethen \, dann die
+Rest-Liste "nackt" an das Ziel senden., f 47;
+#X obj 241 282 print peerreceive;
+#X text 194 15 Globales receive from peer Argument: Portnummer Message:
+Receive-Name und Wert (Atom oder Liste), f 26;
+#X obj 21 95 prepent listen;
+#X text 22 14 Port für Peer-Empfang;
+#X connect 0 0 3 0;
+#X connect 1 0 2 0;
+#X connect 2 0 12 0;
+#X connect 3 0 6 0;
+#X connect 3 1 5 1;
+#X connect 5 0 7 0;
+#X connect 6 0 5 0;
+#X connect 6 1 4 1;
+#X connect 7 0 4 0;
+#X connect 12 0 0 0;

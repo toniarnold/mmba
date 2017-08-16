@@ -1,0 +1,22 @@
+#N canvas 757 102 440 209 10;
+#X obj 15 40 inlet;
+#X obj 84 169 s peersend;
+#X text 15 11 Message;
+#X obj 153 39 loadbang;
+#X obj 153 70 symbol \$1;
+#X text 149 12 Receive-Name;
+#X obj 84 138 list trim;
+#X obj 84 107 list prepend;
+#X obj 15 168 outlet;
+#X obj 15 71 localcontrol;
+#X text 278 7 receive for peer Add-On für simples "receive" \, da
+ohne Namens-Inlet., f 22;
+#X obj 219 38 inlet;
+#X connect 0 0 9 0;
+#X connect 3 0 4 0;
+#X connect 4 0 7 1;
+#X connect 6 0 1 0;
+#X connect 7 0 6 0;
+#X connect 9 0 8 0;
+#X connect 9 1 7 0;
+#X connect 11 0 4 0;

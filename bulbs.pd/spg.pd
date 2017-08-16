@@ -1,0 +1,24 @@
+#N canvas 618 542 445 202 10;
+#X obj 15 40 inlet;
+#X obj 84 166 s peersend;
+#X text 15 11 Message;
+#X obj 153 39 loadbang;
+#X obj 153 70 symbol \$1;
+#X obj 216 39 inlet;
+#X text 173 11 Receive-Name;
+#X obj 84 135 list trim;
+#X text 216 69 Symbol als Send-Ziel voranstellen;
+#X obj 15 102 send;
+#X obj 84 104 list prepend;
+#X obj 15 71 localgui;
+#X text 299 7 send to peer Drop-In Replacement für simples "send"
+für GUI-Elemente, f 19;
+#X connect 0 0 11 0;
+#X connect 3 0 4 0;
+#X connect 4 0 9 1;
+#X connect 4 0 10 1;
+#X connect 5 0 4 0;
+#X connect 7 0 1 0;
+#X connect 10 0 7 0;
+#X connect 11 0 9 0;
+#X connect 11 1 10 0;

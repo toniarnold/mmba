@@ -5,8 +5,11 @@ PD = _main.pd thumb.png info.json \
      preset.pd presets_r_s.pd \
      rg.pd sf.pd sg.pd \
      spigot8.pd 4spigot.pd \
-     prepent.pd scale.pd speedlim.pd
-
+     prepent.pd scale.pd speedlim.pd \
+     peerreceive.pd peersend.pd \
+     localcontrol.pd localgui.pd \
+     rp.pd sp.pd spg.pd
+     
 CD = bulb.pd
 
 .PHONY: clean

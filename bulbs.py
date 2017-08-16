@@ -10,8 +10,12 @@
 # sudo service stop bulbs
 
 # Netzwerk-Konfiguration entsprechend bulbs_r_s.pd
-# Bulbs jeweils DNS-Name :  MAC-Adresse
-PORT = 8081
+PORT_PY = 8081
+PORT_PD = 8082
+HOST_PD = "dahomey"
+PORT_PD_PEER = 8083
+
+# Bulbs jeweils DNS-Name : MAC-Adresse
 BULBS = {
     "eingang" : "5CCF7FA0C8B4",
     "mitte" : "5CCF7FA0CA06",
@@ -19,6 +23,8 @@ BULBS = {
 
 # Ab dieser Warteschlangenlänge werden weitere Requests ignoriert
 MAX_PUFFER = 25
+
+
 
 
 import argparse
@@ -39,10 +45,11 @@ import numpy as np
 
 
 
+
 bulb_namen = ", ".join(sorted(BULBS.keys()))
 helptext = """Webserver, welcher via REST-API über Port {0} 
     mit den mystrom-Bulbs kommuniziert. Registrierte Bulbs:
-    """.format(PORT) + bulb_namen
+    """.format(PORT_PY) + bulb_namen
 parser = argparse.ArgumentParser(description=helptext)
 parser.add_argument("-v", "--verbose", action="store_true",
     help="""Request/Response-Logging. Gebe auch doctest 
@@ -62,7 +69,8 @@ args = parser.parse_args()
 
 
 
-# Profiler
+
+# ============ Profiler ============
 
 # Verwendete Messreihen
 echo_times = []
@@ -126,8 +134,8 @@ def now():
 
 
 
-    
-# Kommunikation mit der Bulb
+ 
+# ============ Kommunikation bulbs.py -> Bulb ============
 
 def url(bulb):
     """Generiere Bulb-URL aus dem Namen
@@ -263,15 +271,22 @@ def split_color(color):
 
 
 
-@profile(netsend_times)
+
+# ============ Kommunikation bulbs.py -> PureData ============
+
 def netsend(ip, bulb, values):
     """Entspricht netsend zu netreceive in pd"""
     messages = fudi(bulb, values)
     if args.verbose:
         print("{} {} >PD:   {}".format(now(), tiefe, messages.replace('\n', ' ')))
+    netsend_socket(ip, PORT_PD, messages)
 
+    
+@profile(netsend_times)
+def netsend_socket(ip, port, messages):
+    """Direkt den messages-String an die ip und port senden"""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((ip, PORT))
+    sock.connect((ip, port))
     sock.sendall(bytes(messages, 'ascii'))  # "ASCII text messages compatible with Pd"
     sock.close()
 
@@ -333,6 +348,9 @@ def rgb_2_color(r, g, b):
 
 
 
+
+# ============ Event Loop Handler ============
+
 # Tiefe der Verschachtelung asynchroner Aufrufe, entspricht Warteschlangenlänge
 tiefe = 0
 
@@ -372,9 +390,15 @@ def handle_echo(reader, writer):
         # causes 'socket.send() raised exception.' when pd is not listeing no more
         messages = filter(None, puredata.split(';'))
         for msg in messages:
-            bulb, *cmdarg = msg.strip().split()
+            peer_ip = None
             command = None
-            if cmdarg and (len(cmdarg) == 2):   # ignoriere ill-formed cmd arg
+            
+            bulb, *cmdarg = msg.strip().split()
+            if not cmdarg and bulb == 'peer_ip':    # Hook: IP-Adresse des iOS-Clients zurückmelden
+                peer_ip = request_ip
+                if args.verbose:
+                    print("Client: {0}".format(peer_ip))
+            elif cmdarg and (len(cmdarg) == 2):     # ignoriere ill-formed cmd arg
                 cmd, arg = cmdarg
                 x = int(float(arg))  # pd sliders sind 0..1
                 command = commands[cmd](bulb, x)       
@@ -382,15 +406,33 @@ def handle_echo(reader, writer):
             yield from writer.drain()
             writer.close()
 
-            # Schritt 2: Request an die u.U. langsame Bulb in einem separaten Thread
-            if args.verbose:
-                print("{} {} >Bulb: {}".format(now(), tiefe, command)) 
-            reply = yield from loop.run_in_executor(None, post, bulb, command)
-            if args.verbose:
-                print("{} {} <Bulb: {}".format(now(), tiefe, reply))
-            # Sende Response mit netsend an das netreceive in pd
-            yield from loop.run_in_executor(None, netsend, request_ip, bulb, reply)
-
+            if peer_ip:
+                # Peer-IP synchron an den Server melden, wenn der Request vom iOS-Client kommt
+                peer_ip_fudi = "peer_ip {0};".format(peer_ip) # FUDI
+                if args.verbose:
+                    print(">{0}:{1} {2}".format(HOST_PD, PORT_PD, peer_ip_fudi))
+                try:
+                    netsend_socket(HOST_PD, PORT_PD_PEER, peer_ip_fudi)
+                    netsend_socket(HOST_PD, PORT_PD_PEER, "localcontrol 1;")
+                    netsend_socket(HOST_PD, PORT_PD_PEER, "localgui 0;")
+                    netsend_socket(peer_ip, PORT_PD_PEER, "localcontrol 0;")
+                    netsend_socket(peer_ip, PORT_PD_PEER, "localgui 1;")
+                except ConnectionRefusedError:
+                    if args.verbose:
+                        print("No local PureData on port {0}".format(PORT_PD))
+                    netsend_socket(peer_ip, PORT_PD_PEER, "localcontrol 1;")
+                    netsend_socket(peer_ip, PORT_PD_PEER, "localgui 1;")
+               
+            else:
+                # Schritt 2: Request an die u.U. langsame Bulb in einem separaten Thread
+                if args.verbose:
+                    print("{} {} >Bulb: {}".format(now(), tiefe, command)) 
+                reply = yield from loop.run_in_executor(None, post, bulb, command)
+                if args.verbose:
+                    print("{} {} <Bulb: {}".format(now(), tiefe, reply))
+                # Sende Response mit netsend an das netreceive in pd
+                yield from loop.run_in_executor(None, netsend, request_ip, bulb, reply)
+                
         if args.profile:
             endresponse = time.time()
             echo_times.append(endresponse - beginrequest)
@@ -449,7 +491,7 @@ if args.test:
 
 # Starte das Programm als Service 
 loop = asyncio.get_event_loop()
-coro = asyncio.start_server(handle_echo, '', PORT, loop=loop)
+coro = asyncio.start_server(handle_echo, '', PORT_PY, loop=loop)
 server = loop.run_until_complete(coro)
 
 # Bang an alle Bulbs

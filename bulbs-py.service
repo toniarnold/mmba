@@ -1,5 +1,5 @@
 [Unit]
-Description=bulbs.py Server für myStrom-Birnen
+Description=mmba Python server for myStrom bulbs
 After=network-online.target
 Wants=network-online.target
 

@@ -1,0 +1,12 @@
+[Unit]
+Description=mmba PureData server application for myStrom bulbs
+After=bulbs-py.service
+Wants=bulbs-py.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pd -nogui -noaudio -send "get_peer_ip 0" /etc/network/bulbs.pd/_main.pd
+StandardError=syslog
+
+[Install]
+WantedBy=default.target

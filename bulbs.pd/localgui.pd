@@ -1,0 +1,18 @@
+#N canvas 478 563 418 155 10;
+#X obj 20 89 spigot 1;
+#X obj 104 89 spigot 0;
+#X obj 20 117 outlet;
+#X obj 104 117 outlet;
+#X obj 20 23 inlet;
+#X obj 149 58 == 0;
+#X obj 66 23 r localgui;
+#X text 204 16 Weiche: Input zu Output links \, wenn localgui=1 \,
+Output rechts wenn localgui=0., f 33;
+#X obj 289 120 print localgui;
+#X connect 0 0 2 0;
+#X connect 1 0 3 0;
+#X connect 4 0 0 0;
+#X connect 4 0 1 0;
+#X connect 5 0 1 1;
+#X connect 6 0 0 1;
+#X connect 6 0 5 0;

@@ -10,5 +10,6 @@ Flexible App für den iPod Touch zwecks Steuerung von
 * [Anleitung](doc/userdoc.md)
 * [Netzwerk-Topologie](doc/network.md)
 * [Architektur bulbs.pdz](doc/architecture.md)
+* [GUI/LFO auf Client/Server](doc/localcontrol.md)
 
 ![PdParty screenshot](doc/PdParty_screen.png)

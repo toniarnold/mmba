@@ -101,7 +101,7 @@ Wert an value sendet.;
 #X obj 423 14 preset;
 #X text 19 239 Generiere Namens-Messages für jedes einzelne anzubangende
 receive \, das danach den gespeicherten Wert erhalten soll.;
-#X text 16 83 Bang an alle OFO \, dann die Einzel-Bulbs;
+#X text 16 83 Bang an alle LFO \, dann die Einzel-Bulbs;
 #X connect 0 0 44 0;
 #X connect 1 0 44 0;
 #X connect 2 0 44 0;
