@@ -6,7 +6,8 @@ Wants=bulbs-py.service
 [Service]
 Type=simple
 ExecStart=/usr/bin/pd -nogui -noaudio -send "get_peer_ip 0" /etc/network/bulbs.pd/_main.pd
-StandardError=syslog
+StandardOutput=null
+StandardError=null
 
 [Install]
 WantedBy=default.target

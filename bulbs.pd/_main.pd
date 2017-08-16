@@ -1,4 +1,4 @@
-#N canvas 183 312 568 276 10;
+#N canvas 492 583 568 276 10;
 #X obj 22 14 vradio 20 1 0 5 s_wave_1 r_wave_1 empty 0 -8 0 10 -262144
 -1 -1 0;
 #X text 0 57 Tri;
@@ -47,21 +47,21 @@
 #X obj 541 15 vsl 24 101 0 1 0 0 s_mod_3 r_mod_3 Mod 0 -6 0 10 -97176
 -1 -1 5000 1;
 #X obj 12 202 tgl 50 0 s_on_1 r_on_1 On/Off 0 -10 0 13 -248530 -355
--1 0 1;
+-1 1 1;
 #X obj 83 178 vsl 45 101 0 1 0 0 s_hue_1 r_hue_1 Hue 0 -10 0 13 -222484
--1 -1 0 1;
+-1 -1 4680 1;
 #X obj 144 178 vsl 45 101 0 1 0 0 s_sat_1 r_sat_1 Sat 0 -10 0 13 -93240
--1 -1 0 1;
+-1 -1 9300 1;
 #X obj 206 178 vsl 45 101 0 1 0 0 s_val_1 r_val_1 Val 0 -10 0 13 -55159
--1 -1 0 1;
+-1 -1 7900 1;
 #X obj 315 202 tgl 50 0 s_on_2 r_on_2 On/Off 0 -10 0 13 -248530 -355
--1 0 1;
+-1 1 1;
 #X obj 384 178 vsl 45 101 0 1 0 0 s_hue_2 r_hue_2 Hue 0 -10 0 13 -222484
--1 -1 0 1;
+-1 -1 4680 1;
 #X obj 447 178 vsl 45 101 0 1 0 0 s_sat_2 r_sat_2 Sat 0 -10 0 13 -93240
--1 -1 0 1;
+-1 -1 9600 1;
 #X obj 510 178 vsl 45 101 0 1 0 0 s_val_2 r_val_2 Val 0 -10 0 13 -55159
--1 -1 0 1;
+-1 -1 8500 1;
 #X text 191 57 Tri;
 #X text 191 37 Sin;
 #X text 191 95 Aud;
@@ -81,3 +81,5 @@
 #X text 266 241 3;
 #X text 266 261 4;
 #X obj 4 257 presets_r_s;
+#X obj 2 2 tgl 16 0 empty r_view_localcontrol local 18 5 0 10 -262144
+-1 -1 1 1;
