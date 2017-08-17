@@ -171,12 +171,17 @@ def post(bulb, command=None):
     
     request = urllib.request.Request(url(bulb))
     request.add_header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-    if not command is None:
-        data = urllib.parse.urlencode(command, safe=';')
-        data = data.encode('utf-8')
-        f = urllib.request.urlopen(request, data)
-    else:
-        f = urllib.request.urlopen(request)
+    while True: # Ausgeschaltete Bulbs sind normal, warte aufs Einschalten
+        try:
+            data = None
+            if not command is None:
+                data = urllib.parse.urlencode(command, safe=';')
+                data = data.encode('utf-8')
+            f = urllib.request.urlopen(request, data, 60)
+            break
+        except urllib.error.URLError:
+            if args.verbose:
+                print("Bulb {0} antwortet nicht auf {1}".format(bulb, url(bulb)))
     response = f.read().decode('utf-8')
     response_dict = json.loads(response)
     mac, values = next(iter(response_dict.items()))
