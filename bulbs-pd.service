@@ -5,7 +5,8 @@ Wants=bulbs-py.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/pd -nogui -noaudio -send "get_peer_ip 0" /etc/network/bulbs.pd/_main.pd
+# For now, issue #2 requires a current build from branch update/0.48.0 from https://github.com/pure-data/pure-data.git 
+ExecStart=/usr/bin/pd-0.48.0 -nogui -noaudio -send "get_peer_ip 0" /etc/network/bulbs.pd/_main.pd
 StandardOutput=null
 StandardError=null
 
