@@ -46,22 +46,22 @@
 -1 -1 10000 1;
 #X obj 541 15 vsl 24 101 0 1 0 0 s_mod_3 r_mod_3 Mod 0 -6 0 10 -97176
 -1 -1 5000 1;
-#X obj 12 202 tgl 50 0 s_on_1 r_on_1 On/Off 0 -10 0 13 -248530 -355
--1 0 1;
+#X obj 16 192 tgl 50 0 s_on_1 r_on_1 On/Off 0 -10 0 13 -248530 -355
+-1 1 1;
 #X obj 83 178 vsl 45 101 0 1 0 0 s_hue_1 r_hue_1 Hue 0 -10 0 13 -222484
--1 -1 6072 1;
+-1 -1 9331 1;
 #X obj 144 178 vsl 45 101 0 1 0 0 s_sat_1 r_sat_1 Sat 0 -10 0 13 -93240
--1 -1 9300 1;
+-1 -1 6800 1;
 #X obj 206 178 vsl 45 101 0 1 0 0 s_val_1 r_val_1 Val 0 -10 0 13 -55159
--1 -1 7900 1;
-#X obj 315 202 tgl 50 0 s_on_2 r_on_2 On/Off 0 -10 0 13 -248530 -355
+-1 -1 3400 1;
+#X obj 316 190 tgl 50 0 s_on_2 r_on_2 On/Off 0 -10 0 13 -248530 -355
 -1 1 1;
 #X obj 384 178 vsl 45 101 0 1 0 0 s_hue_2 r_hue_2 Hue 0 -10 0 13 -222484
--1 -1 8468 1;
+-1 -1 5487 1;
 #X obj 447 178 vsl 45 101 0 1 0 0 s_sat_2 r_sat_2 Sat 0 -10 0 13 -93240
--1 -1 8100 1;
+-1 -1 8000 1;
 #X obj 510 178 vsl 45 101 0 1 0 0 s_val_2 r_val_2 Val 0 -10 0 13 -55159
--1 -1 8600 1;
+-1 -1 7000 1;
 #X text 191 57 Tri;
 #X text 191 37 Sin;
 #X text 191 95 Aud;
@@ -81,5 +81,5 @@
 #X text 266 241 3;
 #X text 266 261 4;
 #X obj 3 223 presets_r_s;
-#X obj 2 256 tgl 20 0 empty r_view_localcontrol LocalCtrl 22 11 0 10
--262144 -1 -1 1 1;
+#X obj 5 253 tgl 22 0 empty r_view_localcontrol Local 24 11 0 10 -262144
+-1 -1 1 1;
